@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAccountGroupsTable extends Migration
+class CreateVendorDocumentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateAccountGroupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('account_groups', function (Blueprint $table) {
+        Schema::create('vendor_documents', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('vendor_id');
             $table->string('name');
-            $table->string('description');
+            $table->string('file_path');
+            $table->date('expiry_date')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ class CreateAccountGroupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('account_groups');
+        Schema::dropIfExists('vendor_documents');
     }
 }

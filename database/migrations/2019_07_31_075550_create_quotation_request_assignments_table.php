@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAccountGroupsTable extends Migration
+class CreateQuotationRequestAssignmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateAccountGroupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('account_groups', function (Blueprint $table) {
+        Schema::create('quotation_request_assignments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('description');
+            $table->bigInteger('quotation_request_id');
+            $table->bigInteger('user_id')->comment('user yg melakukan assignment');
+            $table->boolean('status')->default(0)->comment('0 = draft, 1 = submitted');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateAccountGroupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('account_groups');
+        Schema::dropIfExists('quotation_request_assignments');
     }
 }

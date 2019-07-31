@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAccountGroupsTable extends Migration
+class CreateQuotationReviewsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateAccountGroupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('account_groups', function (Blueprint $table) {
+        Schema::create('quotation_reviews', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('description');
+            $table->bigInteger('quotation_id');
+            $table->bigInteger('user_id')->comment('yang melakukan review');
+            $table->tinyInteger('status')->comment('0 = rejected, 1 = approved');
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ class CreateAccountGroupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('account_groups');
+        Schema::dropIfExists('quotation_reviews');
     }
 }
