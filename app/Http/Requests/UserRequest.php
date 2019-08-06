@@ -28,9 +28,9 @@ class UserRequest extends FormRequest
             'email' => 'required|email',
             'password' => 'sometimes|required|min:6',
             'active' => 'boolean',
-            'role' => 'required',
-            'vendor_id' => 'exists:vendor,id',
-            'department_id' => 'exists.departments,id'
+            'role' => 'required|in:11,21,31',
+            'vendor_id' => 'required_if:role,31|exists:vendors,id',
+            'department_id' => 'required_if:role,21|exists:departments,id'
         ];
     }
 }

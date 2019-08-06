@@ -15,7 +15,12 @@ class BankController extends Controller
      */
     public function index(Request $request)
     {
-        return Bank::paginate();
+        return Bank::when($request->keyword, function($q) use ($request) {
+                return $q->where('code', 'LIKE', '%'.$request->keyword.'%')
+                    ->orWhere('name', 'LIKE', '%'.$request->keyword.'%');
+            })
+            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**
@@ -52,5 +57,11 @@ class BankController extends Controller
     {
         $bank->delete();
         return ['message' => 'Data has been deleted'];
+    }
+
+    public function getList()
+    {
+        return Bank::select(['id', 'code', 'name'])
+            ->orderBy('code', 'asc')->get();
     }
 }

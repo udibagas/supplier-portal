@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\VendorInvitation;
 use App\Http\Requests\VendorInvitationRequest;
+use Illuminate\Support\Facades\URL;
 
 class VendorInvitationController extends Controller
 {
@@ -15,7 +16,14 @@ class VendorInvitationController extends Controller
      */
     public function index(Request $request)
     {
-        return VendorInvitation::paginate();
+        return VendorInvitation::with('user')
+            ->when($request->keyword, function($q) use ($request) {
+                return $q->where('email', 'LIKE', '%'.$request->keyword.'%')
+                    ->orWhere('name', 'LIKE', '%'.$request->keyword.'%')
+                    ->orWhere('company_name', 'LIKE', '%'.$request->keyword.'%');
+            })
+            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**
@@ -28,6 +36,7 @@ class VendorInvitationController extends Controller
     {
         $input = $request->all();
         $input['user_id'] = $request->user()->id;
+        $input['invitation_url'] = URL::temporarySignedRoute('create-vendor', now()->addDays(7));
         return VendorInvitation::create($input);
     }
 

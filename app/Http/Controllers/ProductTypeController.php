@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Vendor;
-use App\Http\Requests\VendorRequest;
+use App\ProductType;
+use App\Http\Requests\ProductTypeRequest;
 
-class VendorController extends Controller
+class ProductTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,12 +15,12 @@ class VendorController extends Controller
      */
     public function index(Request $request)
     {
-        return Vendor::paginate();
-    }
-
-    public function create()
-    {
-        return view('vendor.create');
+        return ProductType::when($request->keyword, function($q) use ($request) {
+                return $q->where('description', 'LIKE', '%'.$request->keyword.'%')
+                    ->orWhere('name', 'LIKE', '%'.$request->keyword.'%');
+            })
+            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**
@@ -29,20 +29,9 @@ class VendorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(VendorRequest $request)
+    public function store(ProductTypeRequest $request)
     {
-        return Vendor::create($request->all());
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Vendor $vendor)
-    {
-        return $vendor;
+        return ProductType::create($request->all());
     }
 
     /**
@@ -52,10 +41,10 @@ class VendorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(VendorRequest $request, Vendor $vendor)
+    public function update(ProductTypeRequest $request, ProductType $productType)
     {
-        $vendor->update($request->all());
-        return $vendor;
+        $productType->update($request->all());
+        return $productType;
     }
 
     /**
@@ -64,16 +53,15 @@ class VendorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Vendor $vendor)
+    public function destroy(ProductType $productType)
     {
-        return $vendor->delete();
-        // TODO: delete all document add trx
+        $productType->delete();
         return ['message' => 'Data has been deleted'];
     }
 
     public function getList()
     {
-        return Vendor::select(['id', 'name'])
+        return ProductType::select(['id', 'name'])
             ->orderBy('name', 'asc')->get();
     }
 }

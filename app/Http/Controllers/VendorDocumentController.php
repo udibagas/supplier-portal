@@ -15,7 +15,15 @@ class VendorDocumentController extends Controller
      */
     public function index(Request $request)
     {
-        return VendorDocument::paginate();
+        return VendorDocument::when($request->user()->isVendor(), function($q) {
+                return $q->where('vendor_id', auth()->user()->vendor_id);
+            })->when($request->keyword, function($q) use ($request) {
+                return $q->where('name', 'LIKE', '%'.$request->keyword.'%');
+            })->when($request->vendor_id, function($q) use ($request) {
+                return $q->whereIn('vendor_id', $request->vendor_id);
+            })
+            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**
@@ -56,5 +64,28 @@ class VendorDocumentController extends Controller
         }
 
         return ['message' => 'Data has been deleted'];
+    }
+
+    public function upload(Request $request)
+    {
+        $file = $request->file('file');
+        $fileName = time().$file->getClientOriginalName();
+        $extension = $file->getClientOriginalExtension();
+
+        if (!in_array(strtolower($extension), ['pdf', 'png', 'jpeg', 'jpg', 'bmp'])) {
+            return response(['message' => 'File extension not permitted'], 500);
+        }
+
+        try {
+            $file->move('files/', $fileName);
+        } catch (\Exception $e) {
+            return response(['message' => 'Failed to move file'], 500);
+        }
+
+        return [
+            'success' => true,
+            'file' => 'files/'.$fileName,
+            'message' => 'File has been uploaded!'
+        ];
     }
 }

@@ -15,7 +15,17 @@ class VendorBankController extends Controller
      */
     public function index(Request $request)
     {
-        return VendorBank::paginate();
+        return VendorBank::when($request->user()->isVendor(), function($q) {
+                return $q->where('vendor_id', auth()->user()->vendor_id);
+            })->when($request->keyword, function($q) use ($request) {
+                return $q->where('branch', 'LIKE', '%'.$request->keyword.'%');
+            })->when($request->vendor_id, function($q) use ($request) {
+                return $q->whereIn('vendor_id', $request->vendor_id);
+            })->when($request->bank_id, function($q) use ($request) {
+                return $q->whereIn('bank_id', $request->bank_id);
+            })
+            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**

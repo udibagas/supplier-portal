@@ -24,7 +24,12 @@ class VendorBankRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'vendor_id' => 'required|exists:vendors,id',
+            'bank_id' => 'required|exists:banks,id',
+            'branch' => 'required',
+            'account_number' => 'required',
+            'account_holder' => 'required',
+            'currency' => 'required'
         ];
     }
 }

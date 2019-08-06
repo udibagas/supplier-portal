@@ -15,7 +15,13 @@ class DepartmentController extends Controller
      */
     public function index(Request $request)
     {
-        return Department::paginate();
+        return Department::when($request->keyword, function($q) use ($request) {
+                return $q->where('description', 'LIKE', '%'.$request->keyword.'%')
+                    ->orWhere('code', 'LIKE', '%'.$request->keyword.'%')
+                    ->orWhere('name', 'LIKE', '%'.$request->keyword.'%');
+            })
+            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**
@@ -52,5 +58,11 @@ class DepartmentController extends Controller
     {
         $department->delete();
         return ['message' => 'Data has been deleted'];
+    }
+
+    public function getList()
+    {
+        return Department::select(['id', 'name'])
+            ->orderBy('name', 'asc')->get();
     }
 }

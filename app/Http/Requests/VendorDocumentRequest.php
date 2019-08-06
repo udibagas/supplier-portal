@@ -24,6 +24,7 @@ class VendorDocumentRequest extends FormRequest
     public function rules()
     {
         return [
+            'vendor_id' => 'required|exists:vendors,id',
             'name' => 'required',
             'file_path' => 'required',
             'expiry_date' => 'required|date'

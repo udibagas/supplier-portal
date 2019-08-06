@@ -15,7 +15,16 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return User::paginate();
+        return User::selectRaw('users.*, departments.name AS department, vendors.name AS vendor')
+            ->join('departments', 'departments.id', '=', 'users.department_id', 'LEFT')
+            ->join('vendors', 'vendors.id', '=', 'users.vendor_id', 'LEFT')
+            ->when($request->keyword, function($q) use ($request) {
+                return $q->where('users.email', 'LIKE', '%'.$request->keyword.'%')
+                    ->orWhere('users.name', 'LIKE', '%'.$request->keyword.'%')
+                    ->orWhere('users.phone', 'LIKE', '%'.$request->keyword.'%');
+            })
+            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**
@@ -31,6 +40,14 @@ class UserController extends Controller
 
         if ($request->password) {
             $input['password'] = bcrypt($request->password);
+        }
+
+        if ($request->role == User::ROLE_USER) {
+            $input['vendor_id'] = null;
+        }
+
+        if ($request->role == User::ROLE_VENDOR) {
+            $input['department_id'] = null;
         }
 
         return User::create($input);
@@ -51,6 +68,14 @@ class UserController extends Controller
             $input['password'] = bcrypt($request->password);
         }
 
+        if ($request->role == User::ROLE_USER) {
+            $input['vendor_id'] = null;
+        }
+
+        if ($request->role == User::ROLE_VENDOR) {
+            $input['department_id'] = null;
+        }
+
         $user->update($input);
         return $user;
     }
@@ -69,5 +94,14 @@ class UserController extends Controller
 
         $user->delete();
         return ['message' => 'Data has been deleted'];
+    }
+
+    public function getRoleList()
+    {
+        return [
+            User::ROLE_ADMIN => 'Admin',
+            User::ROLE_USER => 'User',
+            User::ROLE_VENDOR => 'Vendor',
+        ];
     }
 }

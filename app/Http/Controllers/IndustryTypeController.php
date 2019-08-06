@@ -15,7 +15,12 @@ class IndustryTypeController extends Controller
      */
     public function index(Request $request)
     {
-        return IndustryType::paginate();
+        return IndustryType::when($request->keyword, function($q) use ($request) {
+            return $q->where('description', 'LIKE', '%'.$request->keyword.'%')
+                ->orWhere('name', 'LIKE', '%'.$request->keyword.'%');
+        })
+        ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+        ->paginate($request->pageSize);
     }
 
     /**
@@ -52,5 +57,11 @@ class IndustryTypeController extends Controller
     {
         return $industryType->delete();
         return ['message' => 'Data has been deleted'];
+    }
+
+    public function getList()
+    {
+        return IndustryType::select(['id', 'name'])
+            ->orderBy('name', 'asc')->get();
     }
 }

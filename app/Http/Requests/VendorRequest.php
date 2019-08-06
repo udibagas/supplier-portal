@@ -27,7 +27,7 @@ class VendorRequest extends FormRequest
             'name' => 'required',
             'establish_date' => 'required|date',
             'npwp' => 'required',
-            'partnership_type_id' => 'required',
+            'partnership_type_id' => 'required|exists:partnership_types,id',
             'business_entity_form' => 'required',
             'company_status' => 'required',
             'address' => 'required',
@@ -39,11 +39,11 @@ class VendorRequest extends FormRequest
             'postcode' => 'required',
             'phone' => 'required',
             'fax' => 'required',
-            'email' => 'required',
-            'website' => 'required',
+            'email' => 'required|email',
+            'website' => 'required|url',
             'contact_person_name' => 'required',
             'contact_person_phone' => 'required',
-            'contact_person_email'
+            'contact_person_email' => 'required|email'
         ];
     }
 }
