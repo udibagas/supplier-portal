@@ -4,7 +4,6 @@ window.Vue = require('vue');
 
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en'
-import router from './router'
 import store from './store'
 
 Vue.use(ElementUI, { locale });
@@ -17,12 +16,12 @@ Vue.filter('readableDate', function(v) {
     return v ? moment(v).format('DD-MMM-YYYY') : ''
 })
 
-Vue.component('App', require('./App').default)
+Vue.component('VendorRegistration', require('./components/VendorRegistration').default)
 
 const app = new Vue({
     el: '#app',
-    store, router,
+    store,
     render: function(createElement) {
-        return createElement('App')
+        return createElement('VendorRegistration')
     }
 });
