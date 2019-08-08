@@ -10,14 +10,15 @@
                         <div class="el-form-item__error" v-if="formErrors.name">{{formErrors.name[0]}}</div>
                     </el-form-item>
 
-                    <el-form-item label="Established Date" :class="formErrors.established_date ? 'is-error' : ''">
+                    <el-form-item label="Established Date" :class="formErrors.establish_date ? 'is-error' : ''">
                         <el-date-picker
                         style="width:100%"
-                        format="yyyy-MM-dd"
+                        format="dd-MMM-yyyy"
+                        value-format="yyyy-MM-dd"
                         placeholder="Established Date"
-                        v-model="formModel.established_date">
+                        v-model="formModel.establish_date">
                         </el-date-picker>
-                        <div class="el-form-item__error" v-if="formErrors.established_date">{{formErrors.established_date[0]}}</div>
+                        <div class="el-form-item__error" v-if="formErrors.establish_date">{{formErrors.establish_date[0]}}</div>
                     </el-form-item>
 
                     <el-form-item label="NPWP" :class="formErrors.npwp ? 'is-error' : ''">
@@ -155,7 +156,7 @@
             </el-row>
         </el-form>
         <div style="text-align:right;border-top:1px solid #EBEEF5;line-height:60px;padding: 0 20px;">
-            <el-button plain icon="el-icon-d-arrow-left" type="primary" @click="$emit('back', 0)">BACK</el-button>
+            <!-- <el-button plain icon="el-icon-d-arrow-left" type="primary" @click="$emit('back', 0)">BACK</el-button> -->
             <el-button icon="el-icon-d-arrow-right" type="primary" @click="() => !!formModel.id ? update() : store()">NEXT</el-button>
         </div>
     </el-card>
@@ -171,21 +172,16 @@ export default {
     },
     methods: {
         store() {
-            this.$emit('next', 2)
-            return;
+            // this.$emit('next', 2)
+            // return;
             axios.post('/vendor', this.formModel).then(r => {
                 this.$message({
                     message: 'Data has been saved!',
                     type: 'success',
                     showClose: true
                 })
-                window.localStorage.setItem('user', JSON.stringify(r.data.user))
-                window.localStorage.setItem('token', r.data.token)
-                window.axios.defaults.headers.common['Authorization'] = 'bearer ' + r.data.token;
-                this.$store.state.user = r.data.user
-                this.$store.state.token = r.data.token
-                this.$store.state.is_logged_in = true
-                this.formModel = r.data.user
+                this.$store.state.vendor_id = r.data.id
+                this.formModel = r.data
                 this.$emit('next', 1)
             }).catch(e => {
                 if (e.response.status == 422) {

@@ -24,7 +24,8 @@ class QuotationRequestRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'department_id' => 'required',
+            'subject' => 'required'
         ];
     }
 }

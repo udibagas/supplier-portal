@@ -99,7 +99,20 @@ export default {
             })
         },
         removeFile(file, fileList) {
-            console.log(file)
+            console.log(file.response.file)
+            axios.delete('/vendorDocument/deleteFile', { params: params }).then(r => {
+                this.$message({
+                    message: r.data.message,
+                    type: 'success',
+                    showClose: true
+                })
+            }).catch(e => {
+                this.$message({
+                    message: e.response.data.message,
+                    type: 'error',
+                    showClose: true
+                })
+            })
         },
         next() {
             this.$emit('next', 3)

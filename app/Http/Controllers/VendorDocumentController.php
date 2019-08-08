@@ -88,4 +88,22 @@ class VendorDocumentController extends Controller
             'message' => 'File has been uploaded!'
         ];
     }
+
+    public function deleteFile(Request $request)
+    {
+        $doc = VendorDocument::where('file_path', $request->file_path)->first();
+
+        if ($doc && file_exists($doc->file_path))
+        {
+            try {
+                unlink($doc->file_path);
+            } catch (\Exception $e) {
+                return response(['message' => 'Failed to delete file'], 500);
+            }
+
+            return ['message' => 'File has been deleted!'];
+        }
+
+        return response(['message' => 'File not found!'], 404);
+    }
 }

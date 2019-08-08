@@ -10,4 +10,9 @@ class VendorInvitation extends Model
         'user_id', 'name', 'email', 'company_name',
         'invitation_url', 'status'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

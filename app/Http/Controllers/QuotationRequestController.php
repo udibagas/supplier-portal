@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\QuotationRequestRequest;
 use App\QuotationRequest;
+use Illuminate\Support\Facades\DB;
 
 class QuotationRequestController extends Controller
 {
@@ -26,9 +27,35 @@ class QuotationRequestController extends Controller
      */
     public function store(QuotationRequestRequest $request)
     {
-        $input = $request->all();
-        $input['user_id'] = $request->user()->id;
-        return QuotationRequest::create($input);
+        try {
+            DB::transaction(function () use ($request) {
+                $id = DB::table('quotation_requests')->insertGetId([
+                    'user_id' => $request->user()->id,
+                    'department_id' => $request->department_id,
+                    'subject' => $request->subject
+                ]);
+
+                DB::table('quotation_request_items')->insert(
+                    array_map(function($item) use ($id) {
+                        // return [
+                        //     'quotation_request_id' => $id,
+                        //     'part_number' => $item['part_number'],
+                        //     'part_description' => $item['part_description'],
+                        //     'requested_qty' => $item['requested_qty'],
+                        //     'requested_delivery_date' => $item['requested_delivery_date'],
+                        //     'remark' => $item['remark'],
+                        //     'attachment' => $item['attachment']
+                        // ];
+                        $item['quotation_request_id'] = $id;
+                        return $item;
+                    }, $request->items)
+                );
+            });
+        } catch (\Exception $e) {
+            return response(['message' => 'Failed to save data. '. $e->getMessage()], 500);
+        }
+
+        return ['message' => 'Data has been saved!'];
     }
 
     /**
@@ -51,8 +78,33 @@ class QuotationRequestController extends Controller
      */
     public function update(QuotationRequestRequest $request, QuotationRequest $quotationRequest)
     {
-        $quotationRequest->update($request->all());
-        return $quotationRequest;
+        try {
+            DB::transaction(function () use ($request, $quotationRequest) {
+                DB::table('quotation_requests')
+                    ->where('id', $quotationRequest->id)
+                    ->update([
+                        'department_id' => $request->department_id,
+                        'subject' => $request->subject
+                    ]);
+
+                // delete all item first
+                DB::table('quotation_request_items')
+                    ->where('quotation_request_id', $quotationRequest->id)
+                    ->delete();
+
+                // add new item
+                DB::table('quotation_request_items')->insert(
+                    array_map(function($item) use ($quotationRequest) {
+                        $item['quotation_request_id'] = $quotationRequest->id;
+                        return $item;
+                    }, $request->items)
+                );
+            });
+        } catch (\Exception $e) {
+            return response(['message' => 'Failed to save data. '. $e->getMessage()], 500);
+        }
+
+        return ['message' => 'Data has been saved!'];
     }
 
     /**

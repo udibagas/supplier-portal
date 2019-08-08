@@ -75,7 +75,7 @@ export default {
             })
         },
         update() {
-            axios.put('/register/' + this.formModel.id, this.formModel).then(r => {
+            axios.put('/user/' + this.formModel.id, this.formModel).then(r => {
                 this.$message({
                     message: 'Data has been saved!',
                     type: 'success',

@@ -23,6 +23,7 @@ class AuthController extends Controller
         $input['password'] = bcrypt($request->password);
         $input['role'] = User::ROLE_VENDOR;
         $input['active'] = 1;
+        $input['api_token'] = str_random(60);
         $user = User::create($input);
         $jwt_token = JWTAuth::attempt($request->only('email', 'password'));
 

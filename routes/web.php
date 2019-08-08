@@ -41,11 +41,15 @@ Route::group(['middleware' => 'auth.jwt'], function() {
     Route::resource('quotation', 'QuotationController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('quotationRequestAssignment', 'QuotationRequestAssignmentController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('quotationRequest', 'QuotationRequestController')->only(['index', 'store', 'update', 'destroy']);
+    Route::post('quotationRequestItemController/uploadAttachment', 'QuotationRequestItemController@uploadAttachment');
+    Route::delete('quotationRequestItemController/deleteAttachment', 'QuotationRequestItemController@deleteAttachment');
+    Route::resource('quotationRequestItemController', 'QuotationRequestItemController')->only(['store', 'destroy']);
     Route::resource('quotationReview', 'QuotationReviewController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('user', 'UserController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('vendorBank', 'VendorBankController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('vendorCompanyManagement', 'VendorCompanyManagementController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('vendor', 'VendorController')->only(['index', 'store', 'update', 'destroy']);
+    Route::delete('vendorDocument/deleteFile', 'VendorDocumentController@deleteFile');
     Route::post('vendorDocument/upload', 'VendorDocumentController@upload');
     Route::resource('vendorDocument', 'VendorDocumentController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('vendorInvitation', 'VendorInvitationController')->only(['index', 'store', 'update', 'destroy']);
