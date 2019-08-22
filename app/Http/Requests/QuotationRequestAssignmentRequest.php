@@ -24,7 +24,7 @@ class QuotationRequestAssignmentRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'vendors' => 'required|array|min:1'
         ];
     }
 }

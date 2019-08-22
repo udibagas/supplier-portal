@@ -1,12 +1,17 @@
 @component('mail::message')
-# Introduction
 
-The body of your message.
+Dear Bapak/Ibu Yang Terhormat,
+
+Semoga Bapak/Ibu dalam keadaan sehat selalu.
+Dengan ini kami menyampaikan permohonan penawaran dengan detail sebagai berikut.
+
+{{-- TODO : penawaran detail --}}
 
 @component('mail::button', ['url' => ''])
-Button Text
+KLIK DISINI UNTUK MENGAJUKAN PENAWARAN
 @endcomponent
 
-Thanks,<br>
+Terimakasih,
+<br><br><br>
 {{ config('app.name') }}
 @endcomponent

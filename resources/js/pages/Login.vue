@@ -56,6 +56,7 @@ export default {
                 this.$store.state.is_logged_in = true
                 this.email = ''
                 this.password = ''
+                this.$router.push('home');
             }).catch(e => {
                 this.$message({
                     message: e.response.data.message || e.response.message,

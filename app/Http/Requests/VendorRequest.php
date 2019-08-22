@@ -28,7 +28,8 @@ class VendorRequest extends FormRequest
             'establish_date' => 'required|date',
             'npwp' => 'required',
             'partnership_type_id' => 'required|exists:partnership_types,id',
-            // 'business_entity_form' => 'required',
+            'account_group_id' => 'required|exists:account_groups,id',
+            'business_entity_form' => 'required',
             'company_status' => 'required',
             'address' => 'required',
             // 'country_id' => 'required',
@@ -43,7 +44,9 @@ class VendorRequest extends FormRequest
             'website' => 'required|url',
             'contact_person_name' => 'required',
             'contact_person_phone' => 'required',
-            'contact_person_email' => 'required|email'
+            'contact_person_email' => 'required|email',
+            'industry_type' => 'required|array',
+            'product_type' => 'required|array',
         ];
     }
 }

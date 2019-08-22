@@ -1,11 +1,8 @@
 <template>
     <div>
-        <el-page-header @back="$emit('goBack')" content="VENDOR INVITATION">
-        </el-page-header>
-        <el-divider></el-divider>
         <el-form :inline="true" style="text-align:right" @submit.native.prevent="() => { return }">
             <el-form-item>
-                <el-button icon="el-icon-message" @click="openForm({role: 0, password: ''})" type="primary">INVITE VENDOR</el-button>
+                <el-button icon="el-icon-message" @click="openForm({})" type="primary">INVITE VENDOR</el-button>
             </el-form-item>
             <el-form-item style="margin-right:0;">
                 <el-input v-model="keyword" placeholder="Search" prefix-icon="el-icon-search" :clearable="true" @change="(v) => { keyword = v; requestData(); }">
@@ -16,27 +13,27 @@
 
         <el-table :data="tableData.data" stripe
         :default-sort = "{prop: sort, order: order}"
-        height="calc(100vh - 290px)"
+        height="calc(100vh - 345px)"
         v-loading="loading"
         @sort-change="sortChange">
             <el-table-column type="expand">
                 <template slot-scope="scope">
                     <table>
-                    <tbody>
-                        <tr><td class="td-label">Invited At</td><td class="td-value">{{scope.row.created_at}}</td></tr>
-                        <tr><td class="td-label">Invited By</td><td class="td-value">{{scope.row.user.name}}</td></tr>
-                        <tr><td class="td-label">Contact Name</td><td class="td-value">{{scope.row.name}}</td></tr>
-                        <tr><td class="td-label">Contact Email</td><td class="td-value">{{scope.row.email}}</td></tr>
-                        <tr><td class="td-label">Vendor Name</td><td class="td-value">{{scope.row.company_name}}</td></tr>
-                        <tr><td class="td-label">Invitation URL</td><td class="td-value">{{scope.row.invitation_url}}</td></tr>
-                        <tr>
-                            <td class="td-label">Status</td>
-                            <td class="td-value">
-                                <el-tag size="mini" :type="scope.row.status ? 'success' : 'info'">{{scope.row.status ? 'Submitted' : 'Draft'}}</el-tag>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                        <tbody>
+                            <tr><td class="td-label">Invited At</td><td class="td-value">{{scope.row.created_at}}</td></tr>
+                            <tr><td class="td-label">Invited By</td><td class="td-value">{{scope.row.user.name}}</td></tr>
+                            <tr><td class="td-label">Contact Name</td><td class="td-value">{{scope.row.name}}</td></tr>
+                            <tr><td class="td-label">Contact Email</td><td class="td-value">{{scope.row.email}}</td></tr>
+                            <tr><td class="td-label">Vendor Name</td><td class="td-value">{{scope.row.company_name}}</td></tr>
+                            <tr><td class="td-label">Invitation URL</td><td class="td-value">{{scope.row.invitation_url}}</td></tr>
+                            <!-- <tr>
+                                <td class="td-label">Status</td>
+                                <td class="td-value">
+                                    <el-tag size="mini" :type="scope.row.status ? 'success' : 'info'">{{scope.row.status ? 'Submitted' : 'Draft'}}</el-tag>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
                 </template>
             </el-table-column>
             <el-table-column prop="created_at" label="Invited At" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
@@ -45,13 +42,13 @@
             <el-table-column prop="email" label="Contact Email" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
             <el-table-column prop="company_name" label="Vendor Name" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
             <el-table-column prop="invitation_url" label="Invitation URL" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
-            <el-table-column fixed="right" prop="status" label="Status" sortable="custom" min-width="100px">
+            <!-- <el-table-column fixed="right" prop="status" label="Status" sortable="custom" min-width="100px">
                 <template slot-scope="scope">
                     <el-tag size="mini" :type="scope.row.status ? 'success' : 'info'">{{scope.row.status ? 'Submitted' : 'Draft'}}</el-tag>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
 
-            <el-table-column fixed="right" width="40px">
+            <!-- <el-table-column fixed="right" width="40px">
                 <template slot-scope="scope">
                     <el-dropdown v-if="scope.row.status == 0">
                         <span class="el-dropdown-link">
@@ -63,7 +60,7 @@
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
         </el-table>
 
         <br>
@@ -101,8 +98,8 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button plain type="primary" @click="() => !!formModel.id ? update(0) : store(0)"><i class="el-icon-success"></i> SAVE AS DRAFT</el-button>
-                <el-button type="primary" @click="() => !!formModel.id ? update(1) : store(1)"><i class="el-icon-success"></i> SAVE AND SUBMIT</el-button>
+                <!-- <el-button plain type="primary" @click="() => !!formModel.id ? update(0) : store(0)"><i class="el-icon-success"></i> SAVE AS DRAFT</el-button> -->
+                <el-button type="primary" @click="() => !!formModel.id ? update(1) : store(1)"><i class="el-icon-success"></i> INVITE</el-button>
                 <el-button type="info" @click="showForm = false"><i class="el-icon-error"></i> CANCEL</el-button>
             </span>
         </el-dialog>

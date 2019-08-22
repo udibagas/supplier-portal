@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\VendorRegistrationReview;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -11,14 +12,18 @@ class VendorRegistrationApproval extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $subject = '[Supplier Portal] Vendor Verification Approved';
+
+    protected $review;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(VendorRegistrationReview $review)
     {
-        //
+        $this->review = $review;
     }
 
     /**
@@ -28,6 +33,7 @@ class VendorRegistrationApproval extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.vendor-registration-approval');
+        return $this->markdown('emails.vendor-registration-approval')
+            ->with(['review' => $this->review]);
     }
 }

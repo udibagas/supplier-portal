@@ -1,12 +1,12 @@
 @component('mail::message')
-# Introduction
 
-The body of your message.
+Dear Bapak/Ibu Yang Terhormat.
 
-@component('mail::button', ['url' => ''])
-Button Text
-@endcomponent
+Terimakasih telah mendaftar untuk menjadi rekanan kami.
+Team kami akan memverifikasi data Anda dan hasil verifikasi akan kami kirimkan via email.
 
-Thanks,<br>
+
+Terimakasih,
+<br><br><br>
 {{ config('app.name') }}
 @endcomponent

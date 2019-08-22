@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\VendorInvitation;
 use App\Http\Requests\VendorInvitationRequest;
+use App\Mail\VendorInvitationMail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Mail;
 
 class VendorInvitationController extends Controller
 {
@@ -37,7 +39,13 @@ class VendorInvitationController extends Controller
         $input = $request->all();
         $input['user_id'] = $request->user()->id;
         $input['invitation_url'] = URL::temporarySignedRoute('create-vendor', now()->addDays(7));
-        return VendorInvitation::create($input);
+        $invitation = VendorInvitation::create($input);
+
+        Mail::to($request->email, $request->name)
+            ->cc('bagas@lamsolusi.com')
+            ->queue(new VendorInvitationMail($invitation));
+
+        return $invitation;
     }
 
     /**
@@ -46,9 +54,9 @@ class VendorInvitationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(VendorInvitation $vendorInvitation)
     {
-        //
+        return new VendorInvitationMail($vendorInvitation);
     }
 
     /**

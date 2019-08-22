@@ -24,7 +24,7 @@ class VendorCompanyManagementRequest extends FormRequest
     public function rules()
     {
         return [
-            'vendor_id' => 'required|exists:vendor,id',
+            'vendor_id' => 'required|exists:vendors,id',
             'type' => 'required',
             'name' => 'required',
             'id_number' => 'required',

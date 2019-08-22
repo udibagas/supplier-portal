@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\VendorRegistrationReview;
 use App\Http\Requests\VendorRegistrationReviewRequest;
+use App\Mail\VendorRegistrationApproval;
+use App\Mail\VendorRegistrationRejection;
+use Illuminate\Support\Facades\Mail;
 
 class VendorRegistrationReviewController extends Controller
 {
@@ -28,7 +31,21 @@ class VendorRegistrationReviewController extends Controller
     {
         $input = $request->all();
         $input['user_id'] = $request->user()->id;
-        return VendorRegistrationReview::create($input);
+        $review = VendorRegistrationReview::create($input);
+
+        if ($request->verification_status == 1) {
+            $review->vendor->verification_status = 1;
+            $review->vendor->save();
+            Mail::to($review->vendor->user)->queue(new VendorRegistrationApproval($review));
+        }
+
+        if ($request->verification_status == 0) {
+            $review->vendor->verification_status = 0;
+            $review->vendor->save();
+            Mail::to($review->vendor->user)->queue(new VendorRegistrationRejection($review));
+        }
+
+        return $review;
     }
 
     /**

@@ -1,12 +1,15 @@
 @component('mail::message')
-# Introduction
 
-The body of your message.
+Dear Bapak/Ibu Yang Terhormat.
 
-@component('mail::button', ['url' => ''])
-Button Text
+Perusahaan {{$vendor->business_entity_form}} {{$vendor->name}} telah melakukan pendaftaran untuk menjadi rekanan.
+Silakan klik link di bawah ini untuk melakukan review.
+
+@component('mail::button', ['url' => url('/')])
+KLIK DI SINI UNTUK REVIEW
 @endcomponent
 
-Thanks,<br>
+Terimakasih,
+<br><br><br>
 {{ config('app.name') }}
 @endcomponent

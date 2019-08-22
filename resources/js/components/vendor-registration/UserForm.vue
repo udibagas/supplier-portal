@@ -1,7 +1,7 @@
 <template>
     <el-card :body-style="{ padding: '0px' }">
         <div slot="header">LOGIN INFORMATION</div>
-        <el-form label-width="170px" style="height:calc(100vh - 500px);overflow-y:auto;padding:20px;">
+        <el-form label-width="250px" style="padding:20px">
             <el-form-item label="Name" :class="formErrors.name ? 'is-error' : ''">
                 <el-input placeholder="Name" v-model="formModel.name"></el-input>
                 <div class="el-form-item__error" v-if="formErrors.name">{{formErrors.name[0]}}</div>

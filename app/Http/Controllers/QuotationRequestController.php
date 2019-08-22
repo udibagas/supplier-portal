@@ -16,7 +16,12 @@ class QuotationRequestController extends Controller
      */
     public function index(Request $request)
     {
-        return QuotationRequest::paginate();
+        return QuotationRequest::with(['user', 'department', 'items'])
+            ->when($request->keyword, function($q) use ($request) {
+                return $q->where('subect', 'LIKE', '%'.$request->keyword.'%');
+            })
+            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**
@@ -30,22 +35,17 @@ class QuotationRequestController extends Controller
         try {
             DB::transaction(function () use ($request) {
                 $id = DB::table('quotation_requests')->insertGetId([
+                    'created_at' => now(),
+                    'updated_at' => now(),
                     'user_id' => $request->user()->id,
                     'department_id' => $request->department_id,
-                    'subject' => $request->subject
+                    'subject' => $request->subject,
+                    'status' => $request->status
                 ]);
 
                 DB::table('quotation_request_items')->insert(
                     array_map(function($item) use ($id) {
-                        // return [
-                        //     'quotation_request_id' => $id,
-                        //     'part_number' => $item['part_number'],
-                        //     'part_description' => $item['part_description'],
-                        //     'requested_qty' => $item['requested_qty'],
-                        //     'requested_delivery_date' => $item['requested_delivery_date'],
-                        //     'remark' => $item['remark'],
-                        //     'attachment' => $item['attachment']
-                        // ];
+                        $item['created_at'] = $item['updated_at'] = now();
                         $item['quotation_request_id'] = $id;
                         return $item;
                     }, $request->items)
@@ -83,8 +83,10 @@ class QuotationRequestController extends Controller
                 DB::table('quotation_requests')
                     ->where('id', $quotationRequest->id)
                     ->update([
+                        'updated_at' => now(),
                         'department_id' => $request->department_id,
-                        'subject' => $request->subject
+                        'subject' => $request->subject,
+                        'status' => $request->status
                     ]);
 
                 // delete all item first
@@ -95,6 +97,10 @@ class QuotationRequestController extends Controller
                 // add new item
                 DB::table('quotation_request_items')->insert(
                     array_map(function($item) use ($quotationRequest) {
+                        // assign null when not available
+                        unset($item['id']);
+                        unset($item['attachment']);
+                        $item['created_at'] = $item['updated_at'] = now();
                         $item['quotation_request_id'] = $quotationRequest->id;
                         return $item;
                     }, $request->items)

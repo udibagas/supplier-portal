@@ -1,0 +1,11 @@
+PT, CV, Mr. Mrs (di depan customer name)
+compare penawaran:
+    - quantity, tanggal, harga
+    - tampilan nyamping
+    - footer untuk tombol bargain
+
+PO
+    - requester > yg akan melakukan verifikasi pertama (BAST, fungsional)
+
+- Bargaining (note, )
+    - notifikasi email

@@ -98,10 +98,15 @@ class UserController extends Controller
 
     public function getRoleList()
     {
+
         return [
             User::ROLE_ADMIN => 'Admin',
             User::ROLE_USER => 'User',
-            User::ROLE_VENDOR => 'Vendor',
+            User::ROLE_REQUESTER => 'Requester',
+            User::ROLE_TAX => 'Tax',
+            User::ROLE_TREASURY => 'Treasury',
+            User::ROLE_PROCUREMENT => 'Procurement',
+            User::ROLE_VENDOR => 'Vendor'
         ];
     }
 }

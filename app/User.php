@@ -15,6 +15,14 @@ class User extends Authenticatable implements JWTSubject
 
     const ROLE_USER = 21;
 
+    const ROLE_REQUESTER = 22;
+
+    const ROLE_TAX = 23;
+
+    const ROLE_TREASURY = 24;
+
+    const ROLE_PROCUREMENT = 25;
+
     const ROLE_VENDOR = 31;
 
     /**
@@ -68,6 +76,10 @@ class User extends Authenticatable implements JWTSubject
     public function isVendor()
     {
         return $this->role == self::ROLE_VENDOR;
+    }
+
+    public function vendor() {
+        return $this->hasOne(Vendor::class);
     }
 
 }

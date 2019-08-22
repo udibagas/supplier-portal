@@ -1,27 +1,20 @@
 <template>
-    <el-container>
-        <Login :visible.sync="!this.$store.state.is_logged_in" />
-        <Profile v-if="$store.state.is_logged_in" :show="showProfile" @close="showProfile = false" />
-        <el-header>
-            <el-row>
-                <el-col :span="12">
-                    <el-button type="text" class="btn-big text-white" @click.prevent="collapse = !collapse" :icon="collapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"></el-button>
-                    <span class="brand"> {{appName}} </span>
-                </el-col>
-                <el-col :span="12" class="text-right">
-                    <el-dropdown @command="handleCommand">
-                        <span class="el-dropdown-link" style="cursor:pointer">Welcome, {{$store.state.user.name}}!</span>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item command="profile">My Profile</el-dropdown-item>
-                            <el-dropdown-item command="logout">Logout</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                </el-col>
-            </el-row>
-        </el-header>
+    <div>
+        <Login v-if="!$store.state.is_logged_in" :visible.sync="!$store.state.is_logged_in" />
+        <el-container v-else>
+            <Profile :show="showProfile" @close="showProfile = false" />
 
-        <el-container>
             <el-aside width="auto">
+                <div v-show="!collapse" class="brand-box">
+                    <img src="/images/logo.png" style="width:100px;margin:25px 0" alt="">
+
+                    <div>
+                        <el-avatar :size="50" icon="el-icon-user"></el-avatar>
+                        <br>
+                        <strong>{{$store.state.user.name}}</strong><br>
+                        <small>{{$store.state.user.email}}</small>
+                    </div>
+                </div>
                 <el-menu
                 :router="true"
                 :collapse="collapse"
@@ -35,13 +28,32 @@
                     </el-menu-item>
                 </el-menu>
             </el-aside>
-            <el-main>
-                <el-collapse-transition>
-                    <router-view @back="goBack"></router-view>
-                </el-collapse-transition>
-            </el-main>
+            <el-container>
+                <el-header>
+                    <el-row>
+                        <el-col :span="12">
+                            <el-button type="text" class="btn-big text-white" @click.prevent="collapse = !collapse" :icon="collapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"></el-button>
+                            <span class="brand"> {{appName}} </span>
+                        </el-col>
+                        <el-col :span="12" class="text-right">
+                            <el-dropdown @command="handleCommand">
+                                <span class="el-dropdown-link" style="cursor:pointer">Welcome, {{$store.state.user.name}}!</span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item command="profile">My Profile</el-dropdown-item>
+                                    <el-dropdown-item command="logout">Logout</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </el-col>
+                    </el-row>
+                </el-header>
+                <el-main>
+                    <el-collapse-transition>
+                        <router-view @back="goBack"></router-view>
+                    </el-collapse-transition>
+                </el-main>
+            </el-container>
         </el-container>
-    </el-container>
+    </div>
 </template>
 
 <script>
@@ -52,25 +64,70 @@ export default {
     components: { Login, Profile },
     computed: {
         menus() {
-            return [
-                {label: 'Dashboard', icon: 'el-icon-menu', path: '/' },
-                {label: 'Vendor Invitation', icon: 'el-icon-message', path: 'vendor-invitation' },
-                {label: 'Vendor Registration Review', icon: 'el-icon-folder-checked', path: 'vendor-registration-review' },
-                {label: 'Invoice Submission', icon: 'el-icon-folder-add', path: 'invoice-submission' },
-                {label: 'Invoice Submission Review', icon: 'el-icon-document-checked', path: 'invoice-submission-review' },
-                {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' },
-                {label: 'Quotation Request Assignment', icon: 'el-icon-share', path: 'quotation-request-assignment' },
-                {label: 'Vendor Quotation', icon: 'el-icon-notebook-2', path: 'vendor-quotation' },
-                {label: 'Master Data', icon: 'el-icon-coin', path: 'master-data' },
-                // {label: 'Account Group', icon: 'el-icon-user', path: 'account-group' },
-                // {label: 'Bank', icon: 'el-icon-user', path: 'bank' },
-                // {label: 'Department', icon: 'el-icon-user', path: 'department' },
-                // {label: 'Industry Type', icon: 'el-icon-user', path: 'industry-type' },
-                // {label: 'Partnership Type', icon: 'el-icon-user', path: 'partnership-type' },
-                // {label: 'Product Type', icon: 'el-icon-user', path: 'product-type' },
-                // {label: 'User', icon: 'el-icon-user', path: 'user' },
-                // {label: 'Vendor', icon: 'el-icon-user', path: 'vendor' },
-            ]
+            // admin
+            if (this.$store.state.user.role == 11) {
+                return [
+                    {label: 'Dashboard', icon: 'el-icon-menu', path: '/' },
+                    {label: 'Vendor Management', icon: 'el-icon-s-check', path: 'vendor' },
+                    {label: 'Invoice Submission', icon: 'el-icon-folder-add', path: 'invoice-submission' },
+                    {label: 'Invoice Monitoring', icon: 'el-icon-zoom-in', path: 'invoice-monitoring' },
+                    {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' },
+                    {label: 'Master Data', icon: 'el-icon-coin', path: 'master-data' },
+                ]
+            }
+
+            // user
+            if (this.$store.state.user.role == 21) {
+                return [
+                    {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' }
+                ]
+            }
+
+            // requester
+            if (this.$store.state.user.role == 22) {
+                return [
+                    {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' },
+                    // untuk review
+                    {label: 'Invoice Submission', icon: 'el-icon-folder-add', path: 'invoice-submission' },
+                    {label: 'Invoice Monitoring', icon: 'el-icon-zoom-in', path: 'invoice-monitoring' },
+                ]
+            }
+
+            // tax
+            if (this.$store.state.user.role == 23) {
+                return [
+                    {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' },
+                    // untuk review
+                    {label: 'Invoice Submission', icon: 'el-icon-folder-add', path: 'invoice-submission' },
+                    {label: 'Invoice Monitoring', icon: 'el-icon-zoom-in', path: 'invoice-monitoring' },
+                ]
+            }
+
+            // treasury
+            if (this.$store.state.user.role == 24) {
+                return [
+                    {label: 'Invoice Submission', icon: 'el-icon-folder-add', path: 'invoice-submission' },
+                    {label: 'Invoice Monitoring', icon: 'el-icon-zoom-in', path: 'invoice-monitoring' },
+                ]
+            }
+
+            // procurement
+            if (this.$store.state.user.role == 25) {
+                return [
+                    {label: 'Vendor Management', icon: 'el-icon-s-check', path: 'vendor' },
+                    {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' },
+                ]
+            }
+
+            // Vendor
+            if (this.$store.state.user.role == 31) {
+                return [
+                    {label: 'Vendor Profile', icon: 'el-icon-menu', path: '/vendor-profile' },
+                    {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' },
+                    {label: 'Billable PO', icon: 'el-icon-money', path: 'billable-po' },
+                    {label: 'Invoice Monitoring', icon: 'el-icon-zoom-in', path: 'invoice-monitoring' },
+                ]
+            }
         }
     },
     data() {
@@ -110,6 +167,14 @@ export default {
     margin-left: 20px;
 }
 
+.brand-box {
+    height: 220px;
+    background-color: #060446;
+    text-align: center;
+    color: #fff;
+}
+
+
 .btn-big {
     font-size: 22px;
 }
@@ -123,15 +188,16 @@ export default {
 .sidebar {
     background-color: #463404;
     border-color: #060446;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 220px);
+    overflow: auto;
 }
 
 .sidebar:not(.el-menu--collapse) {
-    width: 270px;
+    width: 220px;
 }
 
 .el-aside {
-    height: calc(100vh - 60px);
+    height: 100vh;
 }
 
 .el-dropdown-link {

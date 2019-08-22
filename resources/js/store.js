@@ -17,10 +17,11 @@ export default new Vuex.Store({
         departmentList: [],
         industryTypeList: [],
         partnershipTypeList: [],
+        vendorDocumentTypeList: [],
         productTypeList: [],
         vendorList: [],
         roleList: [],
-        businessEntityFormList: ['PT', 'CV'],
+        businessEntityFormList: ['PT', 'CV', 'Mr.', 'Mrs.'],
         companyStatusList: ['Pusat', 'Cabang'],
     },
     mutations: {
@@ -46,6 +47,10 @@ export default new Vuex.Store({
         },
         getProductTypeList(state) {
             axios.get('/productType/getList').then(r => state.productTypeList = r.data)
+                .catch(e => console.log(e))
+        },
+        getVendorDocumentTypeList(state) {
+            axios.get('/vendorDocumentType/getList').then(r => state.vendorDocumentTypeList = r.data)
                 .catch(e => console.log(e))
         },
         getVendorList(state) {

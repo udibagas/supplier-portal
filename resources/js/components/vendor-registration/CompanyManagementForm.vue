@@ -2,16 +2,16 @@
     <el-card :body-style="{ padding: '0px' }">
         <div slot="header" class="clearfix">
             COMPANY MANAGEMENT
-            <el-button icon="el-icon-plus" style="float: right; padding: 3px 0" type="text" @click="showForm = true">Add Data</el-button>
+            <el-button icon="el-icon-plus" style="float: right; padding: 3px 0" type="text" @click="showForm = true">ADD DATA</el-button>
         </div>
 
-        <el-table :data="tableData.data" stripe height="calc(100vh - 460px)">
+        <el-table :data="tableData.data" stripe>
             <el-table-column prop="type" label="Type" show-overflow-tooltip></el-table-column>
             <el-table-column prop="name" label="Name" show-overflow-tooltip></el-table-column>
             <el-table-column prop="position" label="Position" show-overflow-tooltip></el-table-column>
             <el-table-column prop="id_number" label="ID Number" show-overflow-tooltip></el-table-column>
             <el-table-column prop="date_of_birth" label="Date of Birth" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="rligion" label="Religion" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="religion" label="Religion" show-overflow-tooltip></el-table-column>
             <el-table-column width="40px">
                 <template slot-scope="scope">
                     <el-dropdown>
@@ -29,14 +29,14 @@
 
         <el-dialog :visible.sync="showForm" :title="!!formModel.id ? 'EDIT MANAGEMENT' : 'ADD MANAGEMENT'" width="500px">
             <el-form label-width="150px">
-                <el-form-item label="Type" :class="formErrors.code ? 'is-error' : ''">
-                    <el-select v-model="formModel.role" placeholder="Type" style="width:100%">
+                <el-form-item label="Type" :class="formErrors.type ? 'is-error' : ''">
+                    <el-select v-model="formModel.type" placeholder="Type" style="width:100%">
                         <el-option
                         v-for="(t, i) in ['Komisaris', 'Direksi', 'Pemegang Saham']"
                         :value="t" :label="t" :key="i">
                         </el-option>
                     </el-select>
-                    <div class="el-form-item__error" v-if="formErrors.type">{{formErrors.role[0]}}</div>
+                    <div class="el-form-item__error" v-if="formErrors.type">{{formErrors.type[0]}}</div>
                 </el-form-item>
 
                 <el-form-item label="Name" :class="formErrors.name ? 'is-error' : ''">
@@ -49,16 +49,21 @@
                     <div class="el-form-item__error" v-if="formErrors.position">{{formErrors.position[0]}}</div>
                 </el-form-item>
 
-                <el-form-item label="Birth of Date" :class="formErrors.birth_of_date ? 'is-error' : ''">
+                <el-form-item label="KTP/SIM Number" :class="formErrors.id_number ? 'is-error' : ''">
+                    <el-input placeholder="KTP/SIM Number" v-model="formModel.id_number"></el-input>
+                    <div class="el-form-item__error" v-if="formErrors.id_number">{{formErrors.id_number[0]}}</div>
+                </el-form-item>
+
+                <el-form-item label="Birth of Date" :class="formErrors.date_of_birth ? 'is-error' : ''">
                     <el-date-picker
                     style="width:100%"
                     type="date"
                     value-format="yyyy-MM-dd"
                     format="dd-MMM-yyyy"
                     placeholder="Birth of Date"
-                    v-model="formModel.expiry_date">
+                    v-model="formModel.date_of_birth">
                     </el-date-picker>
-                    <div class="el-form-item__error" v-if="formErrors.expiry_date">{{formErrors.expiry_date[0]}}</div>
+                    <div class="el-form-item__error" v-if="formErrors.date_of_birth">{{formErrors.date_of_birth[0]}}</div>
                 </el-form-item>
 
                 <el-form-item label="Religion" :class="formErrors.religion ? 'is-error' : ''">
@@ -111,7 +116,11 @@ export default {
             }
         },
         requestData() {
-            let params = { vendor_id: this.$store.state.vendor_id }
+            let params = {
+                vendor_id: this.$store.state.vendor_id,
+                sort: 'name',
+                order: 'ascending'
+            }
             axios.get('/vendorCompanyManagement', { params: params }).then(r => {
                 this.tableData = r.data
             }).catch(e => {
@@ -129,6 +138,9 @@ export default {
                     type: 'success',
                     showClose: true
                 })
+                this.showForm = false
+                this.formModel = {}
+                this.requestData()
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;
@@ -151,6 +163,9 @@ export default {
                     type: 'success',
                     showClose: true
                 })
+                this.showForm = false
+                this.formModel = {}
+                this.requestData()
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;
@@ -165,7 +180,7 @@ export default {
                 }
             })
         },
-        delete(id) {
+        deleteData(id) {
             this.$confirm('Are you sure?', 'Confirm', { type: 'warning'}).then(() => {
                 axios.delete('/vendorCompanyManagement/' + id).then(r => {
                     this.$message({
@@ -173,6 +188,7 @@ export default {
                         type: 'success',
                         showClose: true
                     })
+                    this.requestData()
                 }).catch(e => {
                     this.$message({
                         message: e.response.data.message,

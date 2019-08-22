@@ -15,7 +15,13 @@ class VendorCompanyManagementController extends Controller
      */
     public function index(Request $request)
     {
-        return VendorCompanyManagement::paginate();
+        return VendorCompanyManagement::when($request->keyword, function($q) use ($request) {
+                return $q->where('name', 'LIKE', '%'.$request->keyword.'%');
+            })->when($request->vendor_id, function($q) use ($request) {
+                return $q->where('vendor_id', $request->vendor_id);
+            })
+            ->orderBy('name', $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**

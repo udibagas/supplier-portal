@@ -2,11 +2,11 @@
     <el-card :body-style="{ padding: '0px' }">
         <div slot="header" class="clearfix">
             COMPANY BANK
-            <el-button icon="el-icon-plus" style="float: right; padding: 3px 0" type="text" @click="showForm = true">Add Data</el-button>
+            <el-button icon="el-icon-plus" style="float: right; padding: 3px 0" type="text" @click="showForm = true">ADD DATA</el-button>
         </div>
 
-        <el-table :data="tableData.data" stripe height="calc(100vh - 460px)">
-            <el-table-column prop="bank" label="Bank" show-overflow-tooltip></el-table-column>
+        <el-table :data="tableData.data" stripe>
+            <el-table-column prop="bank.name" label="Bank" show-overflow-tooltip></el-table-column>
             <el-table-column prop="branch" label="Branch" show-overflow-tooltip></el-table-column>
             <el-table-column prop="account_number" label="Account Number" show-overflow-tooltip></el-table-column>
             <el-table-column prop="account_holder" label="Account Holder" show-overflow-tooltip></el-table-column>
@@ -55,7 +55,7 @@
                 </el-form-item>
 
                 <el-form-item label="Currency" :class="formErrors.currency ? 'is-error' : ''">
-                    <el-select filterable default-first-option clearable v-model="formModel.currency" placeholder="Bank" style="width:100%">
+                    <el-select filterable default-first-option clearable v-model="formModel.currency" placeholder="Currency" style="width:100%">
                         <el-option v-for="(value, code) in currencies"
                         :value="code"
                         :label="code + ' - ' + value.name"
@@ -103,11 +103,16 @@ export default {
                     showClose: true
                 })
             } else {
+                // notify user procurement, update status vendor
                 this.$emit('next', 5)
             }
         },
         requestData() {
-            let params = { vendor_id: this.$store.state.vendor_id }
+            let params = {
+                vendor_id: this.$store.state.vendor_id,
+                sort: 'bank_id',
+                order: 'ascending'
+            }
             axios.get('/vendorBank', { params: params }).then(r => {
                 this.tableData = r.data
             }).catch(e => {
@@ -125,6 +130,9 @@ export default {
                     type: 'success',
                     showClose: true
                 })
+                this.formModel = {}
+                this.showForm = false
+                this.requestData()
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;
@@ -147,6 +155,9 @@ export default {
                     type: 'success',
                     showClose: true
                 })
+                this.formModel = {}
+                this.showForm = false
+                this.requestData()
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;
@@ -161,7 +172,7 @@ export default {
                 }
             })
         },
-        delete(id) {
+        deleteData(id) {
             this.$confirm('Are you sure?', 'Confirm', { type: 'warning'}).then(() => {
                 axios.delete('/vendorBank/' + id).then(r => {
                     this.$message({
@@ -169,6 +180,7 @@ export default {
                         type: 'success',
                         showClose: true
                     })
+                    this.requestData()
                 }).catch(e => {
                     this.$message({
                         message: e.response.data.message,

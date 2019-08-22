@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\QuotationRequestAssignment;
 use App\Http\Requests\QuotationRequestAssignmentRequest;
+use App\Vendor;
+use Illuminate\Support\Facades\Mail;
 
 class QuotationRequestAssignmentController extends Controller
 {
@@ -29,7 +31,20 @@ class QuotationRequestAssignmentController extends Controller
         $input = $request->all();
         $input['user_id'] = $request->user()->id;
         $quotationRequestAssignment = QuotationRequestAssignment::create($input);
-        // TODO: if submitted then send email to vendors and update quotation request
+        $quotationRequestAssignment->vendors()->createMany(array_map(function($vendor) use ($quotationRequestAssignment) {
+            return [
+                'quotation_request_assignment_id' => $quotationRequestAssignment->id,
+                'quotation_request_id' => $quotationRequestAssignment->quotation_request_id,
+                'user_id' => Vendor::find($vendor)->user_id,
+                'vendor_id' => $vendor,
+                'status' => 0
+            ];
+        }, $request->vendors));
+
+        foreach ($quotationRequestAssignment->vendors as $vendor) {
+            // Mail::to($vendor->email, );
+        }
+
         return $quotationRequestAssignment;
     }
 

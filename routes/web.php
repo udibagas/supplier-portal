@@ -30,6 +30,7 @@ Route::group(['middleware' => 'auth.jwt'], function() {
     Route::get('productType/getList', 'ProductTypeController@getList');
     Route::get('user/getRoleList', 'UserController@getRoleList');
     Route::get('vendor/getList', 'VendorController@getList');
+    Route::get('vendorDocumentType/getList', 'VendorDocumentTypeController@getList');
 
     Route::resource('bank', 'BankController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('department', 'DepartmentController')->only(['index', 'store', 'update', 'destroy']);
@@ -41,19 +42,22 @@ Route::group(['middleware' => 'auth.jwt'], function() {
     Route::resource('quotation', 'QuotationController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('quotationRequestAssignment', 'QuotationRequestAssignmentController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('quotationRequest', 'QuotationRequestController')->only(['index', 'store', 'update', 'destroy']);
-    Route::post('quotationRequestItemController/uploadAttachment', 'QuotationRequestItemController@uploadAttachment');
-    Route::delete('quotationRequestItemController/deleteAttachment', 'QuotationRequestItemController@deleteAttachment');
-    Route::resource('quotationRequestItemController', 'QuotationRequestItemController')->only(['store', 'destroy']);
+    Route::post('quotationRequestItem/uploadAttachment', 'QuotationRequestItemController@uploadAttachment');
+    Route::delete('quotationRequestItem/deleteAttachment', 'QuotationRequestItemController@deleteAttachment');
+    Route::resource('quotationRequestItem', 'QuotationRequestItemController')->only(['store', 'destroy']);
     Route::resource('quotationReview', 'QuotationReviewController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('user', 'UserController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('vendorBank', 'VendorBankController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('vendorCompanyManagement', 'VendorCompanyManagementController')->only(['index', 'store', 'update', 'destroy']);
+    Route::get('vendor/getByUser/{user}', 'VendorController@getByUser');
+    Route::post('vendor/notify/{vendor}', 'VendorController@notify');
     Route::resource('vendor', 'VendorController')->only(['index', 'store', 'update', 'destroy']);
     Route::delete('vendorDocument/deleteFile', 'VendorDocumentController@deleteFile');
     Route::post('vendorDocument/upload', 'VendorDocumentController@upload');
     Route::resource('vendorDocument', 'VendorDocumentController')->only(['index', 'store', 'update', 'destroy']);
-    Route::resource('vendorInvitation', 'VendorInvitationController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('vendorInvitation', 'VendorInvitationController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('vendorRegistrationReview', 'VendorRegistrationReviewController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('vendorDocumentType', 'VendorDocumentTypeController')->only(['index', 'store', 'update', 'destroy']);
 });
 
 Route::get('/{any}', 'AppController@index')->where('any', '.*');

@@ -1,12 +1,19 @@
 @component('mail::message')
-# Introduction
 
-The body of your message.
+Dear Bapak/Ibu Yang Terhormat.
 
-@component('mail::button', ['url' => ''])
-Button Text
+Terimakasih telah mendaftar untuk menjadi rekanan kami.
+Kami telah melakukan verifikasi data yang Anda kirimkan dan kami nyatakan perusahaan Anda terdaftar sebagai rekanan kami.
+Silakan login ke Aplikasi Supplier Portal untuk submit invoice atau mengirimkan quotation berdasarkan request yang kami buat.
+
+<strong>Note:</strong><br>
+{{nl2br($review->note)}}
+
+@component('mail::button', ['url' => url('/')])
+KLIK DI SINI UNTUK LOGIN
 @endcomponent
 
-Thanks,<br>
+Terimakasih,
+<br><br><br>
 {{ config('app.name') }}
 @endcomponent

@@ -3471,6 +3471,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _vendor_registration_CompanyDocumentForm__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./vendor-registration/CompanyDocumentForm */ "./resources/js/components/vendor-registration/CompanyDocumentForm.vue");
 /* harmony import */ var _vendor_registration_CompanyManagementForm__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./vendor-registration/CompanyManagementForm */ "./resources/js/components/vendor-registration/CompanyManagementForm.vue");
 /* harmony import */ var _vendor_registration_CompanyBankForm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./vendor-registration/CompanyBankForm */ "./resources/js/components/vendor-registration/CompanyBankForm.vue");
+/* harmony import */ var _vendor_registration_Finish__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./vendor-registration/Finish */ "./resources/js/components/vendor-registration/Finish.vue");
 //
 //
 //
@@ -3495,6 +3496,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 
 
@@ -3506,12 +3508,13 @@ __webpack_require__.r(__webpack_exports__);
     VendorForm: _vendor_registration_VendorForm__WEBPACK_IMPORTED_MODULE_1__["default"],
     CompanyDocumentForm: _vendor_registration_CompanyDocumentForm__WEBPACK_IMPORTED_MODULE_2__["default"],
     CompanyManagementForm: _vendor_registration_CompanyManagementForm__WEBPACK_IMPORTED_MODULE_3__["default"],
-    CompanyBankForm: _vendor_registration_CompanyBankForm__WEBPACK_IMPORTED_MODULE_4__["default"]
+    CompanyBankForm: _vendor_registration_CompanyBankForm__WEBPACK_IMPORTED_MODULE_4__["default"],
+    Finish: _vendor_registration_Finish__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   data: function data() {
     return {
       step: 0,
-      steps: [_vendor_registration_UserForm__WEBPACK_IMPORTED_MODULE_0__["default"], _vendor_registration_VendorForm__WEBPACK_IMPORTED_MODULE_1__["default"], _vendor_registration_CompanyDocumentForm__WEBPACK_IMPORTED_MODULE_2__["default"], _vendor_registration_CompanyManagementForm__WEBPACK_IMPORTED_MODULE_3__["default"], _vendor_registration_CompanyBankForm__WEBPACK_IMPORTED_MODULE_4__["default"]],
+      steps: [_vendor_registration_UserForm__WEBPACK_IMPORTED_MODULE_0__["default"], _vendor_registration_VendorForm__WEBPACK_IMPORTED_MODULE_1__["default"], _vendor_registration_CompanyDocumentForm__WEBPACK_IMPORTED_MODULE_2__["default"], _vendor_registration_CompanyManagementForm__WEBPACK_IMPORTED_MODULE_3__["default"], _vendor_registration_CompanyBankForm__WEBPACK_IMPORTED_MODULE_4__["default"], _vendor_registration_Finish__WEBPACK_IMPORTED_MODULE_5__["default"]],
       activeStep: _vendor_registration_UserForm__WEBPACK_IMPORTED_MODULE_0__["default"],
       appName: APP_NAME
     };
@@ -3524,10 +3527,7 @@ __webpack_require__.r(__webpack_exports__);
     back: function back(step) {
       this.step = step;
       this.activeStep = this.steps[step];
-    },
-    submit: function submit() {},
-    getData: function getData() {},
-    save: function save() {}
+    }
   }
 });
 
@@ -3647,6 +3647,7 @@ __webpack_require__.r(__webpack_exports__);
           showClose: true
         });
       } else {
+        // notify user procurement, update status vendor
         this.$emit('next', 5);
       }
     },
@@ -3654,7 +3655,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       var params = {
-        vendor_id: this.$store.state.vendor_id
+        vendor_id: this.$store.state.vendor_id,
+        sort: 'bank_id',
+        order: 'ascending'
       };
       axios.get('/vendorBank', {
         params: params
@@ -3677,6 +3680,11 @@ __webpack_require__.r(__webpack_exports__);
           type: 'success',
           showClose: true
         });
+
+        _this2.formModel = {};
+        _this2.showForm = false;
+
+        _this2.requestData();
       })["catch"](function (e) {
         if (e.response.status == 422) {
           _this2.formErrors = e.response.data.errors;
@@ -3701,6 +3709,11 @@ __webpack_require__.r(__webpack_exports__);
           type: 'success',
           showClose: true
         });
+
+        _this3.formModel = {};
+        _this3.showForm = false;
+
+        _this3.requestData();
       })["catch"](function (e) {
         if (e.response.status == 422) {
           _this3.formErrors = e.response.data.errors;
@@ -3715,7 +3728,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    "delete": function _delete(id) {
+    deleteData: function deleteData(id) {
       var _this4 = this;
 
       this.$confirm('Are you sure?', 'Confirm', {
@@ -3727,6 +3740,8 @@ __webpack_require__.r(__webpack_exports__);
             type: 'success',
             showClose: true
           });
+
+          _this4.requestData();
         })["catch"](function (e) {
           _this4.$message({
             message: e.response.data.message,
@@ -3829,13 +3844,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      baseUrl: BASE_URL,
       tableData: {},
       formModel: {},
       formErrors: [],
-      showForm: false
+      showForm: false,
+      selectedData: {},
+      showFilePreview: false
     };
   },
   methods: {
@@ -3876,9 +3904,6 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     next: function next() {
-      this.$emit('next', 3);
-      return;
-
       if (this.tableData.data.length == 0) {
         this.$message({
           message: 'Please upload document',
@@ -3893,7 +3918,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       var params = {
-        vendor_id: this.$store.state.vendor_id
+        vendor_id: this.$store.state.vendor_id,
+        sort: 'name',
+        order: 'ascending'
       };
       axios.get('/vendorDocument', {
         params: params
@@ -3916,6 +3943,11 @@ __webpack_require__.r(__webpack_exports__);
           type: 'success',
           showClose: true
         });
+
+        _this3.showForm = false;
+        _this3.formModel = {};
+
+        _this3.requestData();
       })["catch"](function (e) {
         if (e.response.status == 422) {
           _this3.formErrors = e.response.data.errors;
@@ -3940,6 +3972,11 @@ __webpack_require__.r(__webpack_exports__);
           type: 'success',
           showClose: true
         });
+
+        _this4.showForm = false;
+        _this4.formModel = {};
+
+        _this4.requestData();
       })["catch"](function (e) {
         if (e.response.status == 422) {
           _this4.formErrors = e.response.data.errors;
@@ -3954,7 +3991,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    "delete": function _delete(id) {
+    deleteData: function deleteData(id) {
       var _this5 = this;
 
       this.$confirm('Are you sure?', 'Confirm', {
@@ -3966,6 +4003,8 @@ __webpack_require__.r(__webpack_exports__);
             type: 'success',
             showClose: true
           });
+
+          _this5.requestData();
         })["catch"](function (e) {
           _this5.$message({
             message: e.response.data.message,
@@ -3980,6 +4019,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.requestData();
+    this.$store.commit('getVendorDocumentTypeList');
   }
 });
 
@@ -3994,6 +4034,11 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4110,7 +4155,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       var params = {
-        vendor_id: this.$store.state.vendor_id
+        vendor_id: this.$store.state.vendor_id,
+        sort: 'name',
+        order: 'ascending'
       };
       axios.get('/vendorCompanyManagement', {
         params: params
@@ -4133,6 +4180,11 @@ __webpack_require__.r(__webpack_exports__);
           type: 'success',
           showClose: true
         });
+
+        _this2.showForm = false;
+        _this2.formModel = {};
+
+        _this2.requestData();
       })["catch"](function (e) {
         if (e.response.status == 422) {
           _this2.formErrors = e.response.data.errors;
@@ -4157,6 +4209,11 @@ __webpack_require__.r(__webpack_exports__);
           type: 'success',
           showClose: true
         });
+
+        _this3.showForm = false;
+        _this3.formModel = {};
+
+        _this3.requestData();
       })["catch"](function (e) {
         if (e.response.status == 422) {
           _this3.formErrors = e.response.data.errors;
@@ -4171,7 +4228,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    "delete": function _delete(id) {
+    deleteData: function deleteData(id) {
       var _this4 = this;
 
       this.$confirm('Are you sure?', 'Confirm', {
@@ -4183,6 +4240,8 @@ __webpack_require__.r(__webpack_exports__);
             type: 'success',
             showClose: true
           });
+
+          _this4.requestData();
         })["catch"](function (e) {
           _this4.$message({
             message: e.response.data.message,
@@ -4197,6 +4256,50 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.requestData();
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/vendor-registration/Finish.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/vendor-registration/Finish.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.post('/vendor/notify/' + this.$store.state.vendor_id).then(function (r) {
+      _this.$message({
+        message: 'Pendaftaran berhasil',
+        type: 'success',
+        showClose: true
+      });
+    })["catch"](function (e) {
+      _this.$message({
+        message: 'Gagal mengirimkan notifikasi',
+        type: 'error',
+        showClose: true
+      });
+    });
   }
 });
 
@@ -4484,21 +4587,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      formModel: {},
+      formModel: {
+        user_id: this.$store.state.user.id
+      },
       formErrors: []
     };
   },
@@ -4518,7 +4612,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.$store.state.vendor_id = r.data.id;
         _this.formModel = r.data;
 
-        _this.$emit('next', 1);
+        _this.$emit('next', 2);
       })["catch"](function (e) {
         if (e.response.status == 422) {
           _this.formErrors = e.response.data.errors;
@@ -4545,7 +4639,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.formModel = r.data;
 
-        _this2.$emit('next', 1);
+        _this2.$emit('next', 2);
       })["catch"](function (e) {
         if (e.response.status == 422) {
           _this2.formErrors = e.response.data.errors;
@@ -6405,7 +6499,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".el-header[data-v-6182274c] {\n  background-color: #3688e6;\n  color: #fff;\n  line-height: 60px;\n  font-size: 22px;\n}\n.el-footer[data-v-6182274c] {\n  background-color: #3688e6;\n  color: #fff;\n  line-height: 60px;\n}\n.el-main[data-v-6182274c] {\n  height: calc(100vh - 120px);\n  width: 1000px;\n  margin: 0 auto;\n}", ""]);
+exports.push([module.i, ".el-header.title[data-v-6182274c] {\n  background-color: #3688e6;\n  color: #fff;\n  line-height: 60px;\n  font-size: 22px;\n}\ndiv.step[data-v-6182274c] {\n  background-color: #eee;\n  height: 150px;\n}\n.el-main[data-v-6182274c] {\n  height: calc(100vh - 210px);\n  padding: 20px 200px;\n}", ""]);
 
 // exports
 
@@ -99546,10 +99640,13 @@ var render = function() {
   return _c(
     "el-container",
     [
-      _c("el-header", [_vm._v(_vm._s(_vm.appName) + " - Vendor Registration")]),
+      _c("el-header", { staticClass: "title" }, [
+        _vm._v(_vm._s(_vm.appName) + " - Vendor Registration")
+      ]),
       _vm._v(" "),
       _c(
-        "el-main",
+        "div",
+        { staticClass: "step" },
         [
           _c(
             "el-steps",
@@ -99592,11 +99689,21 @@ var render = function() {
                   title: "Bank Accounts",
                   description: "Add bank accounts"
                 }
+              }),
+              _vm._v(" "),
+              _c("el-step", {
+                attrs: { title: "Finish", description: "Waiting for review" }
               })
             ],
             1
-          ),
-          _vm._v(" "),
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "el-main",
+        [
           _c(
             "keep-alive",
             [
@@ -99609,11 +99716,7 @@ var render = function() {
           )
         ],
         1
-      ),
-      _vm._v(" "),
-      _c("el-footer", [
-        _c("small", [_vm._v("© 2019 - PT Lamjaya Global Solusi")])
-      ])
+      )
     ],
     1
   )
@@ -99660,7 +99763,7 @@ var render = function() {
                 }
               }
             },
-            [_vm._v("Add Data")]
+            [_vm._v("ADD DATA")]
           )
         ],
         1
@@ -99668,16 +99771,14 @@ var render = function() {
       _vm._v(" "),
       _c(
         "el-table",
-        {
-          attrs: {
-            data: _vm.tableData.data,
-            stripe: "",
-            height: "calc(100vh - 460px)"
-          }
-        },
+        { attrs: { data: _vm.tableData.data, stripe: "" } },
         [
           _c("el-table-column", {
-            attrs: { prop: "bank", label: "Bank", "show-overflow-tooltip": "" }
+            attrs: {
+              prop: "bank.name",
+              label: "Bank",
+              "show-overflow-tooltip": ""
+            }
           }),
           _vm._v(" "),
           _c("el-table-column", {
@@ -99936,7 +100037,7 @@ var render = function() {
                         filterable: "",
                         "default-first-option": "",
                         clearable: "",
-                        placeholder: "Bank"
+                        placeholder: "Currency"
                       },
                       model: {
                         value: _vm.formModel.currency,
@@ -100097,7 +100198,7 @@ var render = function() {
     [
       _c(
         "div",
-        { staticClass: "clearfix", attrs: { slot: "header" }, slot: "header" },
+        { attrs: { slot: "header" }, slot: "header" },
         [
           _vm._v("\n        COMPANY DOCUMENT\n        "),
           _c(
@@ -100111,7 +100212,7 @@ var render = function() {
                 }
               }
             },
-            [_vm._v("Add Data")]
+            [_vm._v("ADD DATA")]
           )
         ],
         1
@@ -100119,16 +100220,14 @@ var render = function() {
       _vm._v(" "),
       _c(
         "el-table",
-        {
-          attrs: {
-            data: _vm.tableData.data,
-            stripe: "",
-            height: "calc(100vh - 460px)"
-          }
-        },
+        { attrs: { data: _vm.tableData.data } },
         [
           _c("el-table-column", {
-            attrs: { prop: "name", label: "Name", "show-overflow-tooltip": "" }
+            attrs: {
+              prop: "name",
+              label: "Document Type",
+              "show-overflow-tooltip": ""
+            }
           }),
           _vm._v(" "),
           _c("el-table-column", {
@@ -100140,15 +100239,38 @@ var render = function() {
           }),
           _vm._v(" "),
           _c("el-table-column", {
-            attrs: {
-              prop: "file_path",
-              label: "File",
-              "show-overflow-tooltip": ""
-            }
+            attrs: { label: "File" },
+            scopedSlots: _vm._u([
+              {
+                key: "default",
+                fn: function(scope) {
+                  return [
+                    _c(
+                      "el-button",
+                      {
+                        attrs: {
+                          icon: "el-icon-zoom-in",
+                          type: "primary",
+                          plain: "",
+                          size: "mini"
+                        },
+                        on: {
+                          click: function() {
+                            _vm.selectedData = scope.row
+                            _vm.showFilePreview = true
+                          }
+                        }
+                      },
+                      [_vm._v("View File")]
+                    )
+                  ]
+                }
+              }
+            ])
           }),
           _vm._v(" "),
           _c("el-table-column", {
-            attrs: { width: "40px" },
+            attrs: { width: "40px", fixed: "right", align: "right" },
             scopedSlots: _vm._u([
               {
                 key: "default",
@@ -100165,24 +100287,6 @@ var render = function() {
                           "el-dropdown-menu",
                           { attrs: { slot: "dropdown" }, slot: "dropdown" },
                           [
-                            _c(
-                              "el-dropdown-item",
-                              {
-                                nativeOn: {
-                                  click: function($event) {
-                                    $event.preventDefault()
-                                    return _vm.openForm(scope.row)
-                                  }
-                                }
-                              },
-                              [
-                                _c("i", {
-                                  staticClass: "el-icon-edit-outline"
-                                }),
-                                _vm._v(" Edit")
-                              ]
-                            ),
-                            _vm._v(" "),
                             _c(
                               "el-dropdown-item",
                               {
@@ -100236,19 +100340,32 @@ var render = function() {
                 "el-form-item",
                 {
                   class: _vm.formErrors.name ? "is-error" : "",
-                  attrs: { label: "Name" }
+                  attrs: { label: "Document Type" }
                 },
                 [
-                  _c("el-input", {
-                    attrs: { placeholder: "Name" },
-                    model: {
-                      value: _vm.formModel.name,
-                      callback: function($$v) {
-                        _vm.$set(_vm.formModel, "name", $$v)
-                      },
-                      expression: "formModel.name"
-                    }
-                  }),
+                  _c(
+                    "el-select",
+                    {
+                      staticStyle: { width: "100%" },
+                      attrs: { placeholder: "Document Type" },
+                      model: {
+                        value: _vm.formModel.name,
+                        callback: function($$v) {
+                          _vm.$set(_vm.formModel, "name", $$v)
+                        },
+                        expression: "formModel.name"
+                      }
+                    },
+                    _vm._l(_vm.$store.state.vendorDocumentTypeList, function(
+                      t
+                    ) {
+                      return _c("el-option", {
+                        key: t.id,
+                        attrs: { value: t.name, label: t.name }
+                      })
+                    }),
+                    1
+                  ),
                   _vm._v(" "),
                   _vm.formErrors.name
                     ? _c("div", { staticClass: "el-form-item__error" }, [
@@ -100315,9 +100432,17 @@ var render = function() {
                       }
                     },
                     [
-                      _c("el-button", { attrs: { type: "primary" } }, [
-                        _vm._v("Click to upload")
-                      ]),
+                      _c(
+                        "el-button",
+                        {
+                          attrs: {
+                            type: "primary",
+                            plain: "",
+                            icon: "el-icon-upload2"
+                          }
+                        },
+                        [_vm._v("Click to upload")]
+                      ),
                       _vm._v(" "),
                       _c(
                         "div",
@@ -100382,6 +100507,33 @@ var render = function() {
           )
         ],
         1
+      ),
+      _vm._v(" "),
+      _c(
+        "el-dialog",
+        {
+          attrs: {
+            "append-to-body": "",
+            center: "",
+            fullscreen: "",
+            title: _vm.selectedData.name,
+            visible: _vm.showFilePreview
+          },
+          on: {
+            "update:visible": function($event) {
+              _vm.showFilePreview = $event
+            }
+          }
+        },
+        [
+          _c("iframe", {
+            staticStyle: { width: "100%", height: "calc(100vh - 120px)" },
+            attrs: {
+              src: _vm.baseUrl + "/" + _vm.selectedData.file_path,
+              frameborder: "0"
+            }
+          })
+        ]
       ),
       _vm._v(" "),
       _c(
@@ -100469,7 +100621,7 @@ var render = function() {
                 }
               }
             },
-            [_vm._v("Add Data")]
+            [_vm._v("ADD DATA")]
           )
         ],
         1
@@ -100477,13 +100629,7 @@ var render = function() {
       _vm._v(" "),
       _c(
         "el-table",
-        {
-          attrs: {
-            data: _vm.tableData.data,
-            stripe: "",
-            height: "calc(100vh - 460px)"
-          }
-        },
+        { attrs: { data: _vm.tableData.data, stripe: "" } },
         [
           _c("el-table-column", {
             attrs: { prop: "type", label: "Type", "show-overflow-tooltip": "" }
@@ -100519,7 +100665,7 @@ var render = function() {
           _vm._v(" "),
           _c("el-table-column", {
             attrs: {
-              prop: "rligion",
+              prop: "religion",
               label: "Religion",
               "show-overflow-tooltip": ""
             }
@@ -100613,7 +100759,7 @@ var render = function() {
               _c(
                 "el-form-item",
                 {
-                  class: _vm.formErrors.code ? "is-error" : "",
+                  class: _vm.formErrors.type ? "is-error" : "",
                   attrs: { label: "Type" }
                 },
                 [
@@ -100623,11 +100769,11 @@ var render = function() {
                       staticStyle: { width: "100%" },
                       attrs: { placeholder: "Type" },
                       model: {
-                        value: _vm.formModel.role,
+                        value: _vm.formModel.type,
                         callback: function($$v) {
-                          _vm.$set(_vm.formModel, "role", $$v)
+                          _vm.$set(_vm.formModel, "type", $$v)
                         },
-                        expression: "formModel.role"
+                        expression: "formModel.type"
                       }
                     },
                     _vm._l(["Komisaris", "Direksi", "Pemegang Saham"], function(
@@ -100644,7 +100790,7 @@ var render = function() {
                   _vm._v(" "),
                   _vm.formErrors.type
                     ? _c("div", { staticClass: "el-form-item__error" }, [
-                        _vm._v(_vm._s(_vm.formErrors.role[0]))
+                        _vm._v(_vm._s(_vm.formErrors.type[0]))
                       ])
                     : _vm._e()
                 ],
@@ -100708,7 +100854,34 @@ var render = function() {
               _c(
                 "el-form-item",
                 {
-                  class: _vm.formErrors.birth_of_date ? "is-error" : "",
+                  class: _vm.formErrors.id_number ? "is-error" : "",
+                  attrs: { label: "KTP/SIM Number" }
+                },
+                [
+                  _c("el-input", {
+                    attrs: { placeholder: "KTP/SIM Number" },
+                    model: {
+                      value: _vm.formModel.id_number,
+                      callback: function($$v) {
+                        _vm.$set(_vm.formModel, "id_number", $$v)
+                      },
+                      expression: "formModel.id_number"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.formErrors.id_number
+                    ? _c("div", { staticClass: "el-form-item__error" }, [
+                        _vm._v(_vm._s(_vm.formErrors.id_number[0]))
+                      ])
+                    : _vm._e()
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "el-form-item",
+                {
+                  class: _vm.formErrors.date_of_birth ? "is-error" : "",
                   attrs: { label: "Birth of Date" }
                 },
                 [
@@ -100721,17 +100894,17 @@ var render = function() {
                       placeholder: "Birth of Date"
                     },
                     model: {
-                      value: _vm.formModel.expiry_date,
+                      value: _vm.formModel.date_of_birth,
                       callback: function($$v) {
-                        _vm.$set(_vm.formModel, "expiry_date", $$v)
+                        _vm.$set(_vm.formModel, "date_of_birth", $$v)
                       },
-                      expression: "formModel.expiry_date"
+                      expression: "formModel.date_of_birth"
                     }
                   }),
                   _vm._v(" "),
-                  _vm.formErrors.expiry_date
+                  _vm.formErrors.date_of_birth
                     ? _c("div", { staticClass: "el-form-item__error" }, [
-                        _vm._v(_vm._s(_vm.formErrors.expiry_date[0]))
+                        _vm._v(_vm._s(_vm.formErrors.date_of_birth[0]))
                       ])
                     : _vm._e()
                 ],
@@ -100875,6 +101048,50 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/vendor-registration/Finish.vue?vue&type=template&id=7c87574f&scoped=true&":
+/*!*****************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/vendor-registration/Finish.vue?vue&type=template&id=7c87574f&scoped=true& ***!
+  \*****************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("el-card", [
+    _c(
+      "div",
+      {
+        staticStyle: {
+          "text-align": "center",
+          padding: "20px 0",
+          "font-size": "16px"
+        }
+      },
+      [
+        _c("h2", [_vm._v("Terimakasih!")]),
+        _vm._v(" "),
+        _c("p", [
+          _vm._v(
+            "\n            Terimakasih telah mendaftar mejadi rekanan kami.\n            Team kami akan memverifikasi data Anda dan\n            hasil verifikasi akan kami kirimkan via email.\n        "
+          )
+        ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/vendor-registration/UserForm.vue?vue&type=template&id=014a5a2a&":
 /*!*******************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/vendor-registration/UserForm.vue?vue&type=template&id=014a5a2a& ***!
@@ -100900,14 +101117,7 @@ var render = function() {
       _vm._v(" "),
       _c(
         "el-form",
-        {
-          staticStyle: {
-            height: "calc(100vh - 500px)",
-            "overflow-y": "auto",
-            padding: "20px"
-          },
-          attrs: { "label-width": "170px" }
-        },
+        { staticStyle: { padding: "20px" }, attrs: { "label-width": "250px" } },
         [
           _c(
             "el-form-item",
@@ -101106,14 +101316,7 @@ var render = function() {
       _vm._v(" "),
       _c(
         "el-form",
-        {
-          staticStyle: {
-            height: "calc(100vh - 500px)",
-            "overflow-y": "auto",
-            padding: "20px"
-          },
-          attrs: { "label-width": "170px" }
-        },
+        { staticStyle: { padding: "20px" }, attrs: { "label-width": "170px" } },
         [
           _c(
             "el-row",
@@ -101130,7 +101333,37 @@ var render = function() {
                       attrs: { label: "Company Name" }
                     },
                     [
+                      _c(
+                        "el-select",
+                        {
+                          staticStyle: { width: "30%" },
+                          attrs: { placeholder: "Select" },
+                          model: {
+                            value: _vm.formModel.business_entity_form,
+                            callback: function($$v) {
+                              _vm.$set(
+                                _vm.formModel,
+                                "business_entity_form",
+                                $$v
+                              )
+                            },
+                            expression: "formModel.business_entity_form"
+                          }
+                        },
+                        _vm._l(
+                          _vm.$store.state.businessEntityFormList,
+                          function(t, i) {
+                            return _c("el-option", {
+                              key: i,
+                              attrs: { value: t, label: t }
+                            })
+                          }
+                        ),
+                        1
+                      ),
+                      _vm._v(" "),
                       _c("el-input", {
+                        staticStyle: { width: "68%" },
                         attrs: { placeholder: "Company Name" },
                         model: {
                           value: _vm.formModel.name,
@@ -101244,55 +101477,6 @@ var render = function() {
                       _vm.formErrors.account_group_id
                         ? _c("div", { staticClass: "el-form-item__error" }, [
                             _vm._v(_vm._s(_vm.formErrors.account_group_id[0]))
-                          ])
-                        : _vm._e()
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "el-form-item",
-                    {
-                      class: _vm.formErrors.business_entity_form
-                        ? "is-error"
-                        : "",
-                      attrs: { label: "Business Entity Form" }
-                    },
-                    [
-                      _c(
-                        "el-select",
-                        {
-                          staticStyle: { width: "100%" },
-                          attrs: { placeholder: "Business Entity Form" },
-                          model: {
-                            value: _vm.formModel.business_entity_form,
-                            callback: function($$v) {
-                              _vm.$set(
-                                _vm.formModel,
-                                "business_entity_form",
-                                $$v
-                              )
-                            },
-                            expression: "formModel.business_entity_form"
-                          }
-                        },
-                        _vm._l(
-                          _vm.$store.state.businessEntityFormList,
-                          function(t, i) {
-                            return _c("el-option", {
-                              key: i,
-                              attrs: { value: t, label: t }
-                            })
-                          }
-                        ),
-                        1
-                      ),
-                      _vm._v(" "),
-                      _vm.formErrors.business_entity_form
-                        ? _c("div", { staticClass: "el-form-item__error" }, [
-                            _vm._v(
-                              _vm._s(_vm.formErrors.business_entity_form[0])
-                            )
                           ])
                         : _vm._e()
                     ],
@@ -101421,7 +101605,7 @@ var render = function() {
                         ) {
                           return _c("el-option", {
                             key: i,
-                            attrs: { value: t.id, label: t.name }
+                            attrs: { value: t.name, label: t.name }
                           })
                         }),
                         1
@@ -101468,7 +101652,7 @@ var render = function() {
                         ) {
                           return _c("el-option", {
                             key: i,
-                            attrs: { value: t.id, label: t.name }
+                            attrs: { value: t.name, label: t.name }
                           })
                         }),
                         1
@@ -116537,6 +116721,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/vendor-registration/Finish.vue":
+/*!****************************************************************!*\
+  !*** ./resources/js/components/vendor-registration/Finish.vue ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Finish_vue_vue_type_template_id_7c87574f_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Finish.vue?vue&type=template&id=7c87574f&scoped=true& */ "./resources/js/components/vendor-registration/Finish.vue?vue&type=template&id=7c87574f&scoped=true&");
+/* harmony import */ var _Finish_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Finish.vue?vue&type=script&lang=js& */ "./resources/js/components/vendor-registration/Finish.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Finish_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Finish_vue_vue_type_template_id_7c87574f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Finish_vue_vue_type_template_id_7c87574f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "7c87574f",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/vendor-registration/Finish.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/vendor-registration/Finish.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/vendor-registration/Finish.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Finish_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Finish.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/vendor-registration/Finish.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Finish_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/vendor-registration/Finish.vue?vue&type=template&id=7c87574f&scoped=true&":
+/*!***********************************************************************************************************!*\
+  !*** ./resources/js/components/vendor-registration/Finish.vue?vue&type=template&id=7c87574f&scoped=true& ***!
+  \***********************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Finish_vue_vue_type_template_id_7c87574f_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Finish.vue?vue&type=template&id=7c87574f&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/vendor-registration/Finish.vue?vue&type=template&id=7c87574f&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Finish_vue_vue_type_template_id_7c87574f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Finish_vue_vue_type_template_id_7c87574f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/vendor-registration/UserForm.vue":
 /*!******************************************************************!*\
   !*** ./resources/js/components/vendor-registration/UserForm.vue ***!
@@ -116744,10 +116997,11 @@ var currentUser = JSON.parse(window.localStorage.getItem('user'));
     departmentList: [],
     industryTypeList: [],
     partnershipTypeList: [],
+    vendorDocumentTypeList: [],
     productTypeList: [],
     vendorList: [],
     roleList: [],
-    businessEntityFormList: ['PT', 'CV'],
+    businessEntityFormList: ['PT', 'CV', 'Mr.', 'Mrs.'],
     companyStatusList: ['Pusat', 'Cabang']
   },
   mutations: {
@@ -116789,6 +117043,13 @@ var currentUser = JSON.parse(window.localStorage.getItem('user'));
     getProductTypeList: function getProductTypeList(state) {
       axios.get('/productType/getList').then(function (r) {
         return state.productTypeList = r.data;
+      })["catch"](function (e) {
+        return console.log(e);
+      });
+    },
+    getVendorDocumentTypeList: function getVendorDocumentTypeList(state) {
+      axios.get('/vendorDocumentType/getList').then(function (r) {
+        return state.vendorDocumentTypeList = r.data;
       })["catch"](function (e) {
         return console.log(e);
       });

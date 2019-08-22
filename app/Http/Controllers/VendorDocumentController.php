@@ -15,12 +15,10 @@ class VendorDocumentController extends Controller
      */
     public function index(Request $request)
     {
-        return VendorDocument::when($request->user()->isVendor(), function($q) {
-                return $q->where('vendor_id', auth()->user()->vendor_id);
-            })->when($request->keyword, function($q) use ($request) {
+        return VendorDocument::when($request->keyword, function($q) use ($request) {
                 return $q->where('name', 'LIKE', '%'.$request->keyword.'%');
             })->when($request->vendor_id, function($q) use ($request) {
-                return $q->whereIn('vendor_id', $request->vendor_id);
+                return $q->where('vendor_id', $request->vendor_id);
             })
             ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
             ->paginate($request->pageSize);

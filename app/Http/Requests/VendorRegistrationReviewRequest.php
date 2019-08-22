@@ -24,7 +24,7 @@ class VendorRegistrationReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'note' => 'required'
         ];
     }
 }

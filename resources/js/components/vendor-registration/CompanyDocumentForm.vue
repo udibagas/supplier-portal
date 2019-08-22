@@ -1,22 +1,26 @@
 <template>
     <el-card :body-style="{ padding: '0px' }">
-        <div slot="header" class="clearfix">
+        <div slot="header">
             COMPANY DOCUMENT
-            <el-button icon="el-icon-plus" style="float: right; padding: 3px 0" type="text" @click="showForm = true">Add Data</el-button>
+            <el-button icon="el-icon-plus" style="float: right; padding: 3px 0" type="text" @click="showForm = true">ADD DATA</el-button>
         </div>
 
-        <el-table :data="tableData.data" stripe height="calc(100vh - 460px)">
-            <el-table-column prop="name" label="Name" show-overflow-tooltip></el-table-column>
+        <el-table :data="tableData.data">
+            <el-table-column prop="name" label="Document Type" show-overflow-tooltip></el-table-column>
             <el-table-column prop="expiry_date" label="Expiry Date" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="file_path" label="File" show-overflow-tooltip></el-table-column>
-            <el-table-column width="40px">
+            <el-table-column label="File">
+                <template slot-scope="scope">
+                    <el-button @click="() => { selectedData = scope.row; showFilePreview = true; }" icon="el-icon-zoom-in" type="primary" plain size="mini">View File</el-button>
+                </template>
+            </el-table-column>
+            <el-table-column width="40px" fixed="right" align="right">
                 <template slot-scope="scope">
                     <el-dropdown>
                         <span class="el-dropdown-link">
                             <i class="el-icon-more"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item @click.native.prevent="openForm(scope.row)"><i class="el-icon-edit-outline"></i> Edit</el-dropdown-item>
+                            <!-- <el-dropdown-item @click.native.prevent="openForm(scope.row)"><i class="el-icon-edit-outline"></i> Edit</el-dropdown-item> -->
                             <el-dropdown-item @click.native.prevent="deleteData(scope.row.id)"><i class="el-icon-delete"></i> Delete</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
@@ -26,8 +30,10 @@
 
         <el-dialog :visible.sync="showForm" :title="!!formModel.id ? 'EDIT DOCUMENT' : 'ADD DOCUMENT'" width="500px">
             <el-form label-width="150px">
-                <el-form-item label="Name" :class="formErrors.name ? 'is-error' : ''">
-                    <el-input placeholder="Name" v-model="formModel.name"></el-input>
+                <el-form-item label="Document Type" :class="formErrors.name ? 'is-error' : ''">
+                    <el-select v-model="formModel.name" placeholder="Document Type" style="width:100%">
+                        <el-option v-for="t in $store.state.vendorDocumentTypeList" :value="t.name" :label="t.name" :key="t.id"> </el-option>
+                    </el-select>
                     <div class="el-form-item__error" v-if="formErrors.name">{{formErrors.name[0]}}</div>
                 </el-form-item>
 
@@ -50,7 +56,7 @@
                     :on-error="handleError"
                     :on-remove="removeFile"
                     :limit="1">
-                        <el-button type="primary">Click to upload</el-button>
+                        <el-button type="primary" plain icon="el-icon-upload2">Click to upload</el-button>
                         <div slot="tip" class="el-upload__tip">Allowed  extension : jpg, jpeg, png, bmp, pdf</div>
                     </el-upload>
                     <div class="el-form-item__error" v-if="formErrors.file_path">{{formErrors.file_path[0]}}</div>
@@ -61,6 +67,10 @@
                 <el-button type="primary" @click="() => !!formModel.id ? update() : store()"><i class="el-icon-success"></i> SAVE</el-button>
                 <el-button type="info" @click="showForm = false"><i class="el-icon-error"></i> CANCEL</el-button>
             </span>
+        </el-dialog>
+
+        <el-dialog append-to-body center fullscreen :title="selectedData.name" :visible.sync="showFilePreview">
+            <iframe :src="baseUrl + '/' + selectedData.file_path" frameborder="0" style="width:100%;height: calc(100vh - 120px)"></iframe>
         </el-dialog>
 
         <div style="text-align:right;border-top:1px solid #EBEEF5;line-height:60px;padding: 0 20px;">
@@ -75,10 +85,13 @@
 export default {
     data() {
         return {
+            baseUrl: BASE_URL,
             tableData: {},
             formModel: {},
             formErrors: [],
-            showForm: false
+            showForm: false,
+            selectedData: {},
+            showFilePreview: false
         }
     },
     methods: {
@@ -115,9 +128,6 @@ export default {
             })
         },
         next() {
-            this.$emit('next', 3)
-            return
-
             if (this.tableData.data.length == 0) {
                 this.$message({
                     message: 'Please upload document',
@@ -129,7 +139,11 @@ export default {
             }
         },
         requestData() {
-            let params = { vendor_id: this.$store.state.vendor_id }
+            let params = {
+                vendor_id: this.$store.state.vendor_id,
+                sort: 'name',
+                order: 'ascending'
+            }
             axios.get('/vendorDocument', { params: params }).then(r => {
                 this.tableData = r.data
             }).catch(e => {
@@ -147,6 +161,9 @@ export default {
                     type: 'success',
                     showClose: true
                 })
+                this.showForm = false
+                this.formModel = {}
+                this.requestData()
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;
@@ -169,6 +186,9 @@ export default {
                     type: 'success',
                     showClose: true
                 })
+                this.showForm = false
+                this.formModel = {}
+                this.requestData();
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;
@@ -183,7 +203,7 @@ export default {
                 }
             })
         },
-        delete(id) {
+        deleteData(id) {
             this.$confirm('Are you sure?', 'Confirm', { type: 'warning'}).then(() => {
                 axios.delete('/vendorDocument/' + id).then(r => {
                     this.$message({
@@ -191,6 +211,7 @@ export default {
                         type: 'success',
                         showClose: true
                     })
+                    this.requestData();
                 }).catch(e => {
                     this.$message({
                         message: e.response.data.message,
@@ -203,6 +224,7 @@ export default {
     },
     mounted() {
         this.requestData()
+        this.$store.commit('getVendorDocumentTypeList')
     }
 
 }

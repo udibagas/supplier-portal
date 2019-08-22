@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Vendor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -11,14 +12,18 @@ class VendorRegistrationNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $subject = '[Supplier Portal] Vendor Registration Notification';
+
+    protected $vendor;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Vendor $vendor)
     {
-        //
+        $this->vendor = $vendor;
     }
 
     /**
@@ -28,6 +33,7 @@ class VendorRegistrationNotification extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.vendor-registration-notification');
+        return $this->markdown('emails.vendor-registration-notification')
+            ->with(['vendor' => $this->vendor]);
     }
 }

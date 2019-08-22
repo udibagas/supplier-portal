@@ -2,11 +2,18 @@
      <el-card :body-style="{ padding: '0px' }">
         <div slot="header">COMPANY INFORMATION</div>
 
-        <el-form label-width="170px" style="height:calc(100vh - 500px);overflow-y:auto;padding:20px;">
+        <el-form label-width="170px" style="padding:20px">
             <el-row :gutter="15">
                 <el-col :span="12">
                     <el-form-item label="Company Name" :class="formErrors.name ? 'is-error' : ''">
-                        <el-input placeholder="Company Name" v-model="formModel.name"></el-input>
+                        <el-select v-model="formModel.business_entity_form" placeholder="Select" style="width:30%">
+                            <el-option v-for="(t, i) in $store.state.businessEntityFormList"
+                            :value="t"
+                            :label="t"
+                            :key="i">
+                            </el-option>
+                        </el-select>
+                        <el-input style="width:68%;" placeholder="Company Name" v-model="formModel.name"></el-input>
                         <div class="el-form-item__error" v-if="formErrors.name">{{formErrors.name[0]}}</div>
                     </el-form-item>
 
@@ -35,17 +42,6 @@
                             </el-option>
                         </el-select>
                         <div class="el-form-item__error" v-if="formErrors.account_group_id">{{formErrors.account_group_id[0]}}</div>
-                    </el-form-item>
-
-                    <el-form-item label="Business Entity Form" :class="formErrors.business_entity_form ? 'is-error' : ''">
-                        <el-select v-model="formModel.business_entity_form" placeholder="Business Entity Form" style="width:100%">
-                            <el-option v-for="(t, i) in $store.state.businessEntityFormList"
-                            :value="t"
-                            :label="t"
-                            :key="i">
-                            </el-option>
-                        </el-select>
-                        <div class="el-form-item__error" v-if="formErrors.business_entity_form">{{formErrors.business_entity_form[0]}}</div>
                     </el-form-item>
 
                     <el-form-item label="Company Status" :class="formErrors.company_status ? 'is-error' : ''">
@@ -79,10 +75,7 @@
                         v-model="formModel.industry_type"
                         placeholder="Industry Type"
                         style="width:100%">
-                            <el-option v-for="(t, i) in $store.state.industryTypeList"
-                            :value="t.id"
-                            :label="t.name"
-                            :key="i">
+                            <el-option v-for="(t, i) in $store.state.industryTypeList" :value="t.name" :label="t.name" :key="i">
                             </el-option>
                         </el-select>
                         <div class="el-form-item__error" v-if="formErrors.industry_type">{{formErrors.industry_type[0]}}</div>
@@ -97,11 +90,7 @@
                         v-model="formModel.product_type"
                         placeholder="Product Type"
                         style="width:100%">
-                            <el-option v-for="(t, i) in $store.state.productTypeList"
-                            :value="t.id"
-                            :label="t.name"
-                            :key="i">
-                            </el-option>
+                            <el-option v-for="(t, i) in $store.state.productTypeList" :value="t.name" :label="t.name" :key="i"> </el-option>
                         </el-select>
                         <div class="el-form-item__error" v-if="formErrors.product_type">{{formErrors.product_type[0]}}</div>
                     </el-form-item>
@@ -166,7 +155,7 @@
 export default {
     data() {
         return {
-            formModel: {},
+            formModel: { user_id: this.$store.state.user.id },
             formErrors: []
         }
     },
@@ -182,7 +171,7 @@ export default {
                 })
                 this.$store.state.vendor_id = r.data.id
                 this.formModel = r.data
-                this.$emit('next', 1)
+                this.$emit('next', 2)
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;
@@ -205,7 +194,7 @@ export default {
                     showClose: true
                 })
                 this.formModel = r.data
-                this.$emit('next', 1)
+                this.$emit('next', 2)
             }).catch(e => {
                 if (e.response.status == 422) {
                     this.formErrors = e.response.data.errors;

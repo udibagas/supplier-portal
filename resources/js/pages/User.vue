@@ -26,9 +26,9 @@
             </el-table-column>
             <el-table-column prop="department" label="Department" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="vendor" label="Vendor" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
-            <el-table-column fixed="right" prop="status" label="Status" sortable="custom" show-overflow-tooltip min-width="150px">
+            <el-table-column fixed="right" prop="active" align="center" header-align="center" label="Status" sortable="custom" show-overflow-tooltip min-width="150px">
                 <template slot-scope="scope">
-                    <el-tag size="mini" :type="scope.row.status ? 'success' : 'info'">{{scope.row.status ? 'Active' : 'Inactive'}}</el-tag>
+                    <el-tag size="mini" :type="scope.row.active ? 'success' : 'info'">{{scope.row.active ? 'Active' : 'Inactive'}}</el-tag>
                 </template>
             </el-table-column>
 

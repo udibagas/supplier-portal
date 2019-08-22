@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Vendor;
 use App\Http\Requests\VendorRequest;
+use App\Mail\VendorRegistrationNotification;
+use App\Mail\VendorRegistrationSubmission;
+use Illuminate\Support\Facades\Mail;
+use App\User;
 
 class VendorController extends Controller
 {
@@ -15,7 +19,11 @@ class VendorController extends Controller
      */
     public function index(Request $request)
     {
-        return Vendor::paginate();
+        return Vendor::when($request->keyword, function($q) use ($request) {
+                return $q->where('vendors.name', 'LIKE', '%'.$request->keyword.'%');
+            })
+            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     public function create()
@@ -75,5 +83,17 @@ class VendorController extends Controller
     {
         return Vendor::select(['id', 'name'])
             ->orderBy('name', 'asc')->get();
+    }
+
+    public function notify(Vendor $vendor)
+    {
+        Mail::to($vendor->user)->queue(new VendorRegistrationNotification($vendor));
+        Mail::to('bagas@lamsolusi.com')->queue(new VendorRegistrationSubmission($vendor));
+        return ['message' => 'OK'];
+    }
+
+    public function getByUser(User $user)
+    {
+        return $user->vendor;
     }
 }
