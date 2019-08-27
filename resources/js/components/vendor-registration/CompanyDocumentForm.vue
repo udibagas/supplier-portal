@@ -13,17 +13,9 @@
                     <el-button @click="() => { selectedData = scope.row; showFilePreview = true; }" icon="el-icon-zoom-in" type="primary" plain size="mini">View File</el-button>
                 </template>
             </el-table-column>
-            <el-table-column width="40px" fixed="right" align="right">
+            <el-table-column width="70px" fixed="right" align="right">
                 <template slot-scope="scope">
-                    <el-dropdown>
-                        <span class="el-dropdown-link">
-                            <i class="el-icon-more"></i>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                            <!-- <el-dropdown-item @click.native.prevent="openForm(scope.row)"><i class="el-icon-edit-outline"></i> Edit</el-dropdown-item> -->
-                            <el-dropdown-item @click.native.prevent="deleteData(scope.row.id)"><i class="el-icon-delete"></i> Delete</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
+                    <el-button type="danger" size="small" plain icon="el-icon-delete" @click="deleteData(scope.row.id)"></el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -69,8 +61,8 @@
             </span>
         </el-dialog>
 
-        <el-dialog append-to-body center fullscreen :title="selectedData.name" :visible.sync="showFilePreview">
-            <iframe :src="baseUrl + '/' + selectedData.file_path" frameborder="0" style="width:100%;height: calc(100vh - 120px)"></iframe>
+        <el-dialog custom-class="no-padding-dialog" append-to-body center fullscreen :title="selectedData.name" :visible.sync="showFilePreview">
+            <iframe :src="baseUrl + '/' + selectedData.file_path" frameborder="0" style="width:100%;height: calc(100vh - 60px)"></iframe>
         </el-dialog>
 
         <div style="text-align:right;border-top:1px solid #EBEEF5;line-height:60px;padding: 0 20px;">

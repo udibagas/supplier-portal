@@ -1,9 +1,15 @@
 <template>
     <div>
-        <el-page-header @back="$emit('goBack')" content="VENDOR PROFILE">
-        </el-page-header>
-        <el-divider></el-divider>
-        <el-button type="primary" icon="el-icon-edit">EDIT DATA</el-button>
+        <el-row>
+            <el-col :span="18">
+                <el-page-header @back="$emit('goBack')" content="VENDOR PROFILE">
+                </el-page-header>
+            </el-col>
+            <el-col :span="6" style="text-align:right">
+                <el-button type="primary" plain size="small" icon="el-icon-edit">EDIT DATA</el-button>
+            </el-col>
+        </el-row>
+
         <el-divider></el-divider>
         <VendorDetail :data="data" />
     </div>

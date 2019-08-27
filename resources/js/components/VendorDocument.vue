@@ -10,8 +10,8 @@
             </el-table-column>
         </el-table>
 
-        <el-dialog append-to-body center fullscreen :title="selectedData.name" :visible.sync="showFilePreview">
-            <iframe :src="selectedData.file_path" frameborder="0" style="width:100%;height: calc(100vh - 120px)"></iframe>
+        <el-dialog custom-class="no-padding-dialog" append-to-body center fullscreen :title="selectedData.name" :visible.sync="showFilePreview">
+            <iframe :src="selectedData.file_path" frameborder="0" style="width:100%;height: calc(100vh - 60px)"></iframe>
         </el-dialog>
     </div>
 </template>

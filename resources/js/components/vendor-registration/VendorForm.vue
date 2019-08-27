@@ -2,9 +2,9 @@
      <el-card :body-style="{ padding: '0px' }">
         <div slot="header">COMPANY INFORMATION</div>
 
-        <el-form label-width="170px" style="padding:20px">
-            <el-row :gutter="15">
-                <el-col :span="12">
+        <el-form label-width="150px" style="padding:20px" label-position="left">
+            <el-row :gutter="25">
+                <el-col :span="8">
                     <el-form-item label="Company Name" :class="formErrors.name ? 'is-error' : ''">
                         <el-select v-model="formModel.business_entity_form" placeholder="Select" style="width:30%">
                             <el-option v-for="(t, i) in $store.state.businessEntityFormList"
@@ -96,7 +96,7 @@
                     </el-form-item>
                 </el-col>
 
-                <el-col :span="12">
+                <el-col :span="8">
                     <el-form-item label="Address" :class="formErrors.address ? 'is-error' : ''">
                         <el-input type="textarea" rows="4" placeholder="Address" v-model="formModel.address"></el-input>
                         <div class="el-form-item__error" v-if="formErrors.address">{{formErrors.address[0]}}</div>
@@ -126,7 +126,9 @@
                         <el-input placeholder="Website" v-model="formModel.website"></el-input>
                         <div class="el-form-item__error" v-if="formErrors.website">{{formErrors.website[0]}}</div>
                     </el-form-item>
+                </el-col>
 
+                <el-col :span="8">
                     <el-form-item label="Contact Person" :class="formErrors.contact_person_name ? 'is-error' : ''">
                         <el-input placeholder="Contact Person" v-model="formModel.contact_person_name"></el-input>
                         <div class="el-form-item__error" v-if="formErrors.contact_person_name">{{formErrors.contact_person_name[0]}}</div>

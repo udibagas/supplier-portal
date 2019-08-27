@@ -68,7 +68,7 @@ div.step {
 
 .el-main {
     height: calc(100vh - 210px);
-    padding: 20px 200px;
+    padding: 20px 50px;
     // width: 1000px;
     // margin: 0 auto;
 }

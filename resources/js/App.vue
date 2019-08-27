@@ -5,14 +5,15 @@
             <Profile :show="showProfile" @close="showProfile = false" />
 
             <el-aside width="auto">
-                <div v-show="!collapse" class="brand-box">
-                    <img src="/images/logo.png" style="width:100px;margin:25px 0" alt="">
+                <div class="brand-box">
+                    <img src="/images/logo.png" :style="collapse ? 'width:50px;margin:25px 0' : 'width:100px;margin:25px 0'" alt="">
 
-                    <div>
+                    <div v-show="!collapse">
                         <el-avatar :size="50" icon="el-icon-user"></el-avatar>
                         <br>
                         <strong>{{$store.state.user.name}}</strong><br>
                         <small>{{$store.state.user.email}}</small>
+                        <br><br>
                     </div>
                 </div>
                 <el-menu
@@ -168,7 +169,7 @@ export default {
 }
 
 .brand-box {
-    height: 220px;
+    max-height: 220px;
     background-color: #060446;
     text-align: center;
     color: #fff;
@@ -186,7 +187,7 @@ export default {
 }
 
 .sidebar {
-    background-color: #463404;
+    background-color: #060446;
     border-color: #060446;
     height: calc(100vh - 220px);
     overflow: auto;
@@ -198,6 +199,7 @@ export default {
 
 .el-aside {
     height: 100vh;
+    background-color: #060446;
 }
 
 .el-dropdown-link {
