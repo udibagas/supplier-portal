@@ -281,26 +281,32 @@
                 </el-row>
             </el-form>
             <el-table :data="formModel.items">
-                <el-table-column prop="part_number" label="Part Number"></el-table-column>
-                <el-table-column prop="part_description" label="Part Description"></el-table-column>
-                <el-table-column prop="remark" label="Remark"></el-table-column>
                 <el-table-column header-align="center" label="Request">
+                    <el-table-column prop="part_number" label="Part Number"></el-table-column>
+                    <el-table-column prop="part_description" label="Part Description"></el-table-column>
+                    <el-table-column prop="remark" label="Remark"></el-table-column>
                     <el-table-column prop="requested_qty" label="Qty" show-overflow-tooltip min-width="50px" align="center" header-align="center"></el-table-column>
                     <el-table-column prop="unit" label="Unit" show-overflow-tooltip min-width="50px" align="center" header-align="center"></el-table-column>
-                    <el-table-column prop="requested_delivery_date" label="Delivery Date" header-align="center" show-overflow-tooltip min-width="100px"></el-table-column>
+                    <el-table-column prop="requested_delivery_date" label="Delivery Date" header-align="center" show-overflow-tooltip width="120px"></el-table-column>
                 </el-table-column>
                 <el-table-column header-align="center" label="Quotation">
                     <el-table-column label="Qty" width="100px" header-align="center">
-                        <el-input v-model="formModel.qty" size="mini" placeholder="Qty" type="number"></el-input>
+                        <el-input v-model="formModel.qty" size="small" placeholder="Qty" type="number"></el-input>
                     </el-table-column>
                     <el-table-column label="Price" width="100px" header-align="center">
-                        <el-input v-model="formModel.price" size="mini" placeholder="Price" type="number"></el-input>
+                        <el-input v-model="formModel.price" size="small" placeholder="Price" type="number"></el-input>
                     </el-table-column>
                     <el-table-column label="Delivery Date" width="150px" header-align="center">
-                        <el-date-picker v-model="formModel.delivery_date" size="mini" style="width:100%" value-format="yyyy-MM-dd" format="dd-MMM-yyyy" placeholder="Delivery Date"></el-date-picker>
+                        <el-date-picker v-model="formModel.delivery_date" size="small" style="width:100%" value-format="yyyy-MM-dd" format="dd-MMM-yyyy" placeholder="Delivery Date"></el-date-picker>
                     </el-table-column>
                 </el-table-column>
             </el-table>
+
+            <div slot="footer">
+                <el-button plain type="primary"><i class="el-icon-success"></i> SAVE AS DRAFT</el-button>
+                <el-button type="primary"><i class="el-icon-success"></i> SUBMIT</el-button>
+                <el-button type="info" @click="quotationForm = false"><i class="el-icon-error"></i> CANCEL</el-button>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -496,6 +502,7 @@ export default {
                 pageSize: this.pageSize,
                 sort: this.sort,
                 order: this.order,
+                vendor_id: this.$store.state.user.vendor_id
             }
 
             this.loading = true;

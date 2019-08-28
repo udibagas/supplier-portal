@@ -32,7 +32,7 @@
                 </template> -->
             </el-table-column>
             <el-table-column prop="po_date" label="PO Date" sortable="custom" show-overflow-tooltip min-width="120px"></el-table-column>
-            <el-table-column prop="vendor" label="Vendor" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
+            <el-table-column v-if="$store.state.user.role != 31" prop="vendor" label="Vendor" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
             <el-table-column prop="currency" label="Currency" sortable="custom" show-overflow-tooltip min-width="100px"></el-table-column>
             <el-table-column prop="po_item" label="PO Item" sortable="custom" show-overflow-tooltip min-width="100px"></el-table-column>
             <el-table-column prop="description" label="Description" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
@@ -47,7 +47,7 @@
 
         <br>
 
-        <el-dialog center top="60px" title="INVOICE FORM" width="80%" :visible.sync="invoiceForm">
+        <el-dialog center top="60px" title="INVOICE FORM" width="95%" :visible.sync="invoiceForm">
             <el-form label-position="left" label-width="120px">
                 <el-row :gutter="50">
                     <el-col :span="12">
@@ -120,8 +120,9 @@
             </el-table>
 
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary"><i class="el-icon-success"></i> SUBMIT</el-button>
-                <el-button type="info" @click="invoiceForm = false"><i class="el-icon-error"></i> CANCEL</el-button>
+                <el-button type="primary" plain icon="el-icon-success">SAVE AS DRAFT</el-button>
+                <el-button type="primary" icon="el-icon-success">SUBMIT</el-button>
+                <el-button type="info" @click="invoiceForm = false" icon="el-icon-error">CANCEL</el-button>
             </span>
         </el-dialog>
 

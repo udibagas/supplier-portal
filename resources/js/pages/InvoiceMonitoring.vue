@@ -18,7 +18,7 @@
         @sort-change="sortChange">
             <el-table-column prop="po_number" label="PO Number" sortable="custom" show-overflow-tooltip min-width="120px"></el-table-column>
             <el-table-column prop="po_date" label="PO Date" sortable="custom" show-overflow-tooltip min-width="120px"></el-table-column>
-            <el-table-column prop="vendor" label="Vendor" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
+            <el-table-column v-if="$store.state.user.role != 31" prop="vendor" label="Vendor" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
             <el-table-column prop="currency" label="Currency" sortable="custom" show-overflow-tooltip min-width="100px"></el-table-column>
             <el-table-column prop="po_ammount" label="PO Amount" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column prop="invoice_no" label="Invoice No" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
