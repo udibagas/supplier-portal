@@ -16,11 +16,15 @@ class QuotationRequestController extends Controller
      */
     public function index(Request $request)
     {
-        return QuotationRequest::with(['user', 'department', 'items'])
+        return QuotationRequest::selectRaw('quotation_requests.*')->with(['user', 'department', 'items'])
             ->when($request->keyword, function($q) use ($request) {
                 return $q->where('subect', 'LIKE', '%'.$request->keyword.'%');
             })
-            ->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->when($request->vendor_id, function($q) use ($request) {
+                return $q
+                    ->join('vendor_assignment_quotation_requests', 'vendor_assignment_quotation_requests.quotation_request_id', '=', 'quotation_requests.id')
+                    ->where('vendor_id', $request->vendor_id);
+            })->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
             ->paginate($request->pageSize);
     }
 

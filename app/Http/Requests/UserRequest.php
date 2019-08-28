@@ -29,8 +29,8 @@ class UserRequest extends FormRequest
             'password' => 'sometimes|required|min:6',
             'active' => 'boolean',
             'role' => 'required|in:11,21,31',
-            'vendor_id' => 'required_if:role,31|exists:vendors,id',
-            'department_id' => 'required_if:role,21|exists:departments,id'
+            'vendor_id' => 'required_if:role,31',
+            'department_id' => 'required_if:role,21'
         ];
     }
 }
