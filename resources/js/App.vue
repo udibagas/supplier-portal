@@ -1,6 +1,8 @@
 <template>
     <div>
-        <Login v-if="!$store.state.is_logged_in" :visible.sync="!$store.state.is_logged_in" />
+        <el-container v-if="!$store.state.is_logged_in">
+            <Login />
+        </el-container>
         <el-container v-else>
             <Profile :show="showProfile" @close="showProfile = false" />
 

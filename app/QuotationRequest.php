@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class QuotationRequest extends Model
 {
@@ -10,6 +11,8 @@ class QuotationRequest extends Model
         'user_id', 'department_id', 'request_number',
         'status', 'subject'
     ];
+
+    protected $with = ['vendorAssignments'];
 
     public function user() {
         return $this->belongsTo(User::class);
@@ -21,5 +24,13 @@ class QuotationRequest extends Model
 
     public function items() {
         return $this->hasMany(QuotationRequestItem::class);
+    }
+
+    public function vendorAssignments() {
+        return $this->hasMany(VendorAssignmentQuotationRequest::class);
+    }
+
+    public function assignments() {
+        return $this->hasMany(QuotationRequestAssignment::class);
     }
 }

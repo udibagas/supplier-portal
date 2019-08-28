@@ -40,7 +40,7 @@
             </el-table-column>
 
             <el-table-column fixed="right" label="Status" min-width="120px">
-                 <template slot-scope="scope">
+                 <template>
                     <el-tag type="success">Approved</el-tag>
                 </template>
             </el-table-column>
@@ -107,7 +107,7 @@
         </el-pagination>
 
         <el-dialog :visible="reviewForm" title="REVIEW INVOICE SUBMISSION">
-            <el-form label-width="120px">
+            <el-form label-width="70px" label-position="left">
                 <el-form-item label="Type">
                     <el-select placeholder="type" style="width:100%" v-model="formModel.type">
                         <el-option v-for="(t, i) in ['Document', 'Tax', 'Treasury']" :label="t" :value="t" :key="i"></el-option>

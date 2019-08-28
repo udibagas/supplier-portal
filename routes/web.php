@@ -58,6 +58,7 @@ Route::group(['middleware' => 'auth.jwt'], function() {
     Route::resource('vendorInvitation', 'VendorInvitationController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('vendorRegistrationReview', 'VendorRegistrationReviewController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('vendorDocumentType', 'VendorDocumentTypeController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('quotationRequestAssignment', 'QuotationRequestAssignmentController')->only(['index', 'store', 'update', 'destroy']);;
 });
 
 Route::get('/{any}', 'AppController@index')->where('any', '.*');

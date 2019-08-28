@@ -20,15 +20,20 @@
                 <el-table-column prop="part_number" label="Part Number" show-overflow-tooltip min-width="100px"></el-table-column>
                 <el-table-column prop="part_description" label="Part Description" show-overflow-tooltip min-width="120px"></el-table-column>
                 <el-table-column prop="requested_qty" label="Qty" show-overflow-tooltip min-width="50px" align="center" header-align="center"></el-table-column>
+                <el-table-column prop="unit" label="Unit" show-overflow-tooltip min-width="50px" align="center" header-align="center"></el-table-column>
                 <el-table-column prop="requested_delivery_date" label="Delivery Date" show-overflow-tooltip min-width="120px"></el-table-column>
                 <el-table-column prop="remark" label="Remark" show-overflow-tooltip min-width="120px"></el-table-column>
-                <el-table-column label="Attachment" min-width="100px">
+                <!-- <el-table-column label="Attachment" min-width="100px">
                     <el-button plain size="mini" icon="el-icon-zoom-in" type="primary">View Attachment</el-button>
-                </el-table-column>
+                </el-table-column> -->
             </el-table>
         </el-tab-pane>
         <el-tab-pane label="Assignment History">
-
+            <el-table :data="data.vendor_assignments" stripe>
+                <el-table-column prop="created_at" label="Time" show-overflow-tooltip min-width="100px"></el-table-column>
+                <el-table-column prop="assignment.user.name" label="User" show-overflow-tooltip min-width="150px"></el-table-column>
+                <el-table-column prop="vendor.name" label="Vendor" show-overflow-tooltip min-width="150px"></el-table-column>
+            </el-table>
         </el-tab-pane>
         <el-tab-pane label="Vendor Quotation">
 
