@@ -91,7 +91,7 @@ export default {
                 return [
                     {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' },
                     // untuk review
-                    {label: 'Invoice Submission', icon: 'el-icon-folder-add', path: 'invoice-submission' },
+                    {label: 'Invoice Submission', icon: 'el-icon-money', path: 'invoice-submission' },
                     {label: 'Invoice Monitoring', icon: 'el-icon-zoom-in', path: 'invoice-monitoring' },
                 ]
             }
@@ -101,7 +101,7 @@ export default {
                 return [
                     {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' },
                     // untuk review
-                    {label: 'Invoice Submission', icon: 'el-icon-folder-add', path: 'invoice-submission' },
+                    {label: 'Invoice Submission', icon: 'el-icon-money', path: 'invoice-submission' },
                     {label: 'Invoice Monitoring', icon: 'el-icon-zoom-in', path: 'invoice-monitoring' },
                 ]
             }
@@ -109,7 +109,7 @@ export default {
             // treasury
             if (this.$store.state.user.role == 24) {
                 return [
-                    {label: 'Invoice Submission', icon: 'el-icon-folder-add', path: 'invoice-submission' },
+                    {label: 'Invoice Submission', icon: 'el-icon-money', path: 'invoice-submission' },
                     {label: 'Invoice Monitoring', icon: 'el-icon-zoom-in', path: 'invoice-monitoring' },
                 ]
             }
@@ -128,6 +128,7 @@ export default {
                     {label: 'Vendor Profile', icon: 'el-icon-menu', path: '/vendor-profile' },
                     {label: 'Quotation Request', icon: 'el-icon-document-copy', path: 'quotation-request' },
                     {label: 'Billable PO', icon: 'el-icon-money', path: 'billable-po' },
+                    {label: 'Invoice Submission', icon: 'el-icon-folder-add', path: 'invoice-submission' },
                     {label: 'Invoice Monitoring', icon: 'el-icon-zoom-in', path: 'invoice-monitoring' },
                 ]
             }

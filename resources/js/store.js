@@ -17,12 +17,15 @@ export default new Vuex.Store({
         departmentList: [],
         industryTypeList: [],
         partnershipTypeList: [],
+        paymentTermList: [],
         vendorDocumentTypeList: [],
         productTypeList: [],
         vendorList: [],
         roleList: [],
         businessEntityFormList: ['PT', 'CV', 'Mr.', 'Mrs.'],
         companyStatusList: ['Pusat', 'Cabang'],
+        whtTypeList: [],
+        whtCodeList: [],
     },
     mutations: {
         getAccountGroupList(state) {
@@ -45,6 +48,10 @@ export default new Vuex.Store({
             axios.get('/partnershipType/getList').then(r => state.partnershipTypeList = r.data)
                 .catch(e => console.log(e))
         },
+        getPaymentTermList(state) {
+            axios.get('/paymentTerm/getList').then(r => state.paymentTermList = r.data)
+                .catch(e => console.log(e))
+        },
         getProductTypeList(state) {
             axios.get('/productType/getList').then(r => state.productTypeList = r.data)
                 .catch(e => console.log(e))
@@ -59,6 +66,14 @@ export default new Vuex.Store({
         },
         getRoleList(state) {
             axios.get('user/getRoleList').then(r => state.roleList = r.data)
+                .catch(e => console.log(e))
+        },
+        getWhtTypeList(state) {
+            axios.get('wht/getWhtTypeList').then(r => state.whtTypeList = r.data)
+                .catch(e => console.log(e))
+        },
+        getWhtCodeList(state) {
+            axios.get('wht/getWhtCodeList').then(r => state.whtCodeList = r.data)
                 .catch(e => console.log(e))
         },
     }

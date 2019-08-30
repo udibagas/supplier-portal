@@ -24,14 +24,19 @@ class InvoiceSubmissionRequest extends FormRequest
     public function rules()
     {
         return [
-            'vendor_id' => 'required|exists:vendors,id',
+            // 'vendor_id' => 'required|exists:vendors,id',
             'invoice_date' => 'required|date',
             'invoice_number' => 'required',
             'faktur_number' => 'required',
             'faktur_date' => 'required|date',
+            'payment_term_id' => 'required|exists:payment_terms,id',
+            'due_date' => 'required|date',
             'status' => 'required|numeric',
-            'term_of_payment' => 'required',
-            'total' => 'numeric'
+            'wht_type_id' => 'required',
+            'wht_code_id' => 'required|exists:wht_code,id',
+            'wht_base_amount' => 'required|numeric',
+            'wht_amount' => 'required|numeric',
+            // 'total' => 'numeric'
         ];
     }
 }

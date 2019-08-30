@@ -42,7 +42,7 @@
                 </el-form-item>
 
                 <el-form-item label="File" :class="formErrors.file_path ? 'is-error' : ''">
-                    <el-upload action="/vendorDocument/upload"
+                    <el-upload :action="baseUrl + '/vendorDocument/upload'"
                     :headers="{'Authorization': 'bearer ' + $store.state.token, 'Accept': 'application/json, text/plain, */*'}"
                     :on-success="handleSuccess"
                     :on-error="handleError"

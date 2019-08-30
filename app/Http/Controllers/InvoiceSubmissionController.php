@@ -15,7 +15,24 @@ class InvoiceSubmissionController extends Controller
      */
     public function index(Request $request)
     {
-        return InvoiceSubmission::paginate();
+        return InvoiceSubmission::selectRaw('
+            invoice_submissions.*,
+            vendors.name AS vendor,
+            payment_terms.description AS payment_term,
+            wht_code.VCH_Description AS wht_code
+        ')
+            ->join('payment_terms', 'payment_terms.id', '=', 'invoice_submissions.payment_term_id')
+            ->join('vendors', 'vendors.id', '=', 'invoice_submissions.vendor_id')
+            // ->join('wht_type', 'wht_type.VCH_whtType', '=', 'invoice_submissions.wht_type_id')
+            ->join('wht_code', 'wht_code.id', '=', 'invoice_submissions.wht_code_id')
+            ->when($request->keyword, function($q) use ($request) {
+                return $q->where('invoice_number', 'LIKE', '%'.$request->keyword.'%')
+                         ->orWhere('faktur_number', 'LIKE', '%'.$request->keyword.'%');
+            })
+            ->when($request->vendor_id, function($q) use ($request) {
+                return $q->where('vendor_id', $request->vendor_id);
+            })->orderBy($request->sort, $request->order == 'ascending' ? 'asc' : 'desc')
+            ->paginate($request->pageSize);
     }
 
     /**
@@ -24,11 +41,14 @@ class InvoiceSubmissionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(InvoiceSubmissionRequest $request)
     {
         $input = $request->all();
         $input['user_id'] = $request->user()->id;
-        return InvoiceSubmission::create($input);
+        $input['vendor_id'] = $request->user()->vendor_id;
+        $invoiceSubmission = InvoiceSubmission::create($input);
+        $invoiceSubmission->items()->createMany($request->items);
+        return $invoiceSubmission;
     }
 
     /**
@@ -52,6 +72,8 @@ class InvoiceSubmissionController extends Controller
     public function update(InvoiceSubmissionRequest $request, InvoiceSubmission $invoiceSubmission)
     {
         $invoiceSubmission->update($request->all());
+        $invoiceSubmission->items()->delete();
+        $invoiceSubmission->items()->createMany($request->items);
         return $invoiceSubmission;
     }
 
@@ -67,7 +89,8 @@ class InvoiceSubmissionController extends Controller
             return response(['message' => 'Failed to delete data. Data has been submitted.'], 500);
         }
 
-        return $invoiceSubmission->delete();
+        $invoiceSubmission->delete();
+        $invoiceSubmission->items()->delete();
         return ['message' => 'Data has been deleted'];
     }
 }

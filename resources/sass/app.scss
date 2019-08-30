@@ -44,6 +44,11 @@ body {
     padding: 0px;
 }
 
+.fullscreen-body > .el-dialog__body {
+    height: calc(100vh - 180px);
+    overflow: auto;
+}
+
 .pointer {
     cursor: pointer;
 }

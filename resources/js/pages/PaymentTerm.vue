@@ -1,9 +1,9 @@
 <template>
     <div>
-        <el-page-header @back="$emit('goBack')" content="INVOICE MONITORING">
-        </el-page-header>
-        <el-divider></el-divider>
         <el-form :inline="true" style="text-align:right" @submit.native.prevent="() => { return }">
+            <el-form-item>
+                <el-button icon="el-icon-plus" @click="openForm({})" type="primary">ADD NEW PAYMENT TERM</el-button>
+            </el-form-item>
             <el-form-item style="margin-right:0;">
                 <el-input v-model="keyword" placeholder="Search" prefix-icon="el-icon-search" :clearable="true" @change="(v) => { keyword = v; requestData(); }">
                     <el-button @click="() => { page = 1; keyword = ''; requestData(); }" slot="append" icon="el-icon-refresh"></el-button>
@@ -13,20 +13,24 @@
 
         <el-table :data="tableData.data" stripe
         :default-sort = "{prop: sort, order: order}"
-        height="calc(100vh - 290px)"
+        height="calc(100vh - 345px)"
         v-loading="loading"
         @sort-change="sortChange">
-            <el-table-column prop="po_number" label="PO Number" sortable="custom" show-overflow-tooltip min-width="120px"></el-table-column>
-            <el-table-column prop="po_date" label="PO Date" sortable="custom" show-overflow-tooltip min-width="120px"></el-table-column>
-            <el-table-column v-if="$store.state.user.role != 31" prop="vendor" label="Vendor" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
-            <el-table-column prop="currency" label="Currency" sortable="custom" show-overflow-tooltip min-width="100px"></el-table-column>
-            <el-table-column prop="po_ammount" label="PO Amount" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
-            <el-table-column prop="invoice_no" label="Invoice No" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
-            <el-table-column prop="faktur_no" label="Faktur No" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
-            <el-table-column prop="payment_schedule" label="Payment Schedule" sortable="custom" show-overflow-tooltip min-width="170px"></el-table-column>
-            <el-table-column align="center" header-align="center" fixed="right" prop="status" label="Status" sortable="custom" show-overflow-tooltip min-width="150px">
+            <el-table-column prop="code" label="Code" sortable="custom" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="description" label="Description" sortable="custom" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="days" label="Days" sortable="custom" show-overflow-tooltip></el-table-column>
+
+            <el-table-column width="40px">
                 <template slot-scope="scope">
-                    <el-tag type="success" size="mini">{{scope.row.status}}</el-tag>
+                    <el-dropdown>
+                        <span class="el-dropdown-link">
+                            <i class="el-icon-more"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item @click.native.prevent="openForm(scope.row)"><i class="el-icon-edit-outline"></i> Edit</el-dropdown-item>
+                            <el-dropdown-item @click.native.prevent="deleteData(scope.row.id)"><i class="el-icon-delete"></i> Delete</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
                 </template>
             </el-table-column>
         </el-table>
@@ -41,6 +45,33 @@
         :page-sizes="[10, 25, 50, 100]"
         :total="tableData.total">
         </el-pagination>
+
+        <el-dialog :visible.sync="showForm" :title="!!formModel.id ? 'EDIT PAYMENT TERM' : 'ADD NEW PAYMENT TERM'" width="450px" v-loading="loading" :close-on-click-modal="false">
+            <el-alert type="error" title="ERROR"
+                :description="error.message + '\n' + error.file + ':' + error.line"
+                v-show="error.message"
+                style="margin-bottom:15px;">
+            </el-alert>
+
+            <el-form label-width="100px" label-position="left">
+                <el-form-item label="Code" :class="formErrors.code ? 'is-error' : ''">
+                    <el-input placeholder="Code" v-model="formModel.code"></el-input>
+                    <div class="el-form-item__error" v-if="formErrors.code">{{formErrors.code[0]}}</div>
+                </el-form-item>
+                <el-form-item label="Description" :class="formErrors.description ? 'is-error' : ''">
+                    <el-input placeholder="Description" v-model="formModel.description"></el-input>
+                    <div class="el-form-item__error" v-if="formErrors.description">{{formErrors.description[0]}}</div>
+                </el-form-item>
+                <el-form-item label="Days" :class="formErrors.days ? 'is-error' : ''">
+                    <el-input type="number" placeholder="Days" v-model="formModel.days"></el-input>
+                    <div class="el-form-item__error" v-if="formErrors.days">{{formErrors.days[0]}}</div>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="() => !!formModel.id ? update() : store()"><i class="el-icon-success"></i> SAVE</el-button>
+                <el-button type="info" @click="showForm = false"><i class="el-icon-error"></i> CANCEL</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -55,55 +86,8 @@ export default {
             keyword: '',
             page: 1,
             pageSize: 10,
-            tableData: {
-                data: [
-                    {
-                        po_number: '1000001',
-                        po_date: '19-Aug-2019',
-                        vendor: 'Lamjaya Global Solusi',
-                        currency: 'IDR',
-                        po_ammount: '4.500.000',
-                        invoice_no: 'INV/2019/08/01',
-                        faktur_no: '9999',
-                        payment_schedule: '31-Aug-2019',
-                        status: 'User Checking'
-                    },
-                    {
-                        po_number: '1000002',
-                        po_date: '21-Aug-2019',
-                        vendor: 'Abadi Jaya',
-                        currency: 'IDR',
-                        po_ammount: '1.200.000',
-                        invoice_no: 'INV/2019/07/20',
-                        faktur_no: '5555',
-                        payment_schedule: '31-Aug-2019',
-                        status: 'Tax Checking'
-                    },
-                    {
-                        po_number: '1000003',
-                        po_date: '11-Aug-2019',
-                        vendor: 'Graha Menara',
-                        currency: 'IDR',
-                        po_ammount: '3.700.000',
-                        invoice_no: 'INV/2019/06/02',
-                        faktur_no: '4444',
-                        payment_schedule: '31-Aug-2019',
-                        status: 'Treasury Checking'
-                    },
-                    {
-                        po_number: '1000004',
-                        po_date: '10-Aug-2019',
-                        vendor: 'Duta Global',
-                        currency: 'IDR',
-                        po_ammount: '3.500.000',
-                        invoice_no: 'INV/2019/07/22',
-                        faktur_no: '2222',
-                        payment_schedule: '31-Aug-2019',
-                        status: 'Approved'
-                    },
-                ]
-            },
-            sort: 'name',
+            tableData: {},
+            sort: 'code',
             order: 'ascending',
             loading: false
         }
@@ -122,7 +106,7 @@ export default {
         },
         store() {
             this.loading = true;
-            axios.post('/partnershipType', this.formModel).then(r => {
+            axios.post('/paymentTerm', this.formModel).then(r => {
                 this.showForm = false;
                 this.$message({
                     message: 'Data berhasil disimpan.',
@@ -146,7 +130,7 @@ export default {
         },
         update() {
             this.loading = true;
-            axios.put('/partnershipType/' + this.formModel.id, this.formModel).then(r => {
+            axios.put('/paymentTerm/' + this.formModel.id, this.formModel).then(r => {
                 this.showForm = false
                 this.$message({
                     message: 'Data berhasil disimpan.',
@@ -170,7 +154,7 @@ export default {
         },
         deleteData(id) {
             this.$confirm('Anda yakin akan menghapus data ini?', 'Warning', { type: 'warning' }).then(() => {
-                axios.delete('/partnershipType/' + id).then(r => {
+                axios.delete('/paymentTerm/' + id).then(r => {
                     this.requestData();
                     this.$message({
                         message: r.data.message,
@@ -196,7 +180,7 @@ export default {
             }
 
             this.loading = true;
-            axios.get('/partnershipType', {params: params}).then(r => {
+            axios.get('/paymentTerm', {params: params}).then(r => {
                     this.tableData = r.data
             }).catch(e => {
                 if (e.response.status == 500) {
@@ -212,7 +196,7 @@ export default {
         }
     },
     mounted() {
-        // this.requestData();
+        this.requestData();
     }
 }
 </script>

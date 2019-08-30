@@ -27,10 +27,13 @@ Route::group(['middleware' => 'auth.jwt'], function() {
     Route::get('department/getList', 'DepartmentController@getList');
     Route::get('industryType/getList', 'IndustryTypeController@getList');
     Route::get('partnershipType/getList', 'PartnershipTypeController@getList');
+    Route::get('paymentTerm/getList', 'PaymentTermController@getList');
     Route::get('productType/getList', 'ProductTypeController@getList');
     Route::get('user/getRoleList', 'UserController@getRoleList');
     Route::get('vendor/getList', 'VendorController@getList');
     Route::get('vendorDocumentType/getList', 'VendorDocumentTypeController@getList');
+    Route::get('wht/getWhtTypeList', 'WhtController@getWhtTypeList');
+    Route::get('wht/getWhtCodeList', 'WhtController@getWhtCodeList');
 
     Route::resource('bank', 'BankController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('department', 'DepartmentController')->only(['index', 'store', 'update', 'destroy']);
@@ -38,7 +41,9 @@ Route::group(['middleware' => 'auth.jwt'], function() {
     Route::resource('invoiceSubmission', 'InvoiceSubmissionController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('invoiceSubmissionReview', 'InvoiceSubmissionReviewController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('partnershipType', 'PartnershipTypeController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('paymentTerm', 'PaymentTermController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('productType', 'ProductTypeController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('purchaseOrderVendor', 'PurchaseOrderVendorController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('quotation', 'QuotationController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('quotationRequestAssignment', 'QuotationRequestAssignmentController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('quotationRequest', 'QuotationRequestController')->only(['index', 'store', 'update', 'destroy']);

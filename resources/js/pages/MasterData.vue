@@ -9,6 +9,7 @@
             <el-tab-pane lazy label="Department"><Department /></el-tab-pane>
             <el-tab-pane lazy label="Industry Type"><IndustryType /></el-tab-pane>
             <el-tab-pane lazy label="Partnership Type"><PartnershipType /></el-tab-pane>
+            <el-tab-pane lazy label="Payment Term"><PaymentTerm /></el-tab-pane>
             <el-tab-pane lazy label="Product Type"><ProductType /></el-tab-pane>
             <el-tab-pane lazy label="Document Type"><VendorDocumentType /></el-tab-pane>
             <el-tab-pane lazy label="User"><User /></el-tab-pane>
@@ -22,6 +23,7 @@ import Bank from './Bank'
 import Department from './Department'
 import IndustryType from './IndustryType'
 import PartnershipType from './PartnershipType'
+import PaymentTerm from './PaymentTerm'
 import ProductType from './ProductType'
 import VendorDocumentType from './VendorDocumentType'
 import User from './User'
@@ -34,6 +36,7 @@ export default {
         User,
         IndustryType,
         PartnershipType,
+        PaymentTerm,
         ProductType,
         VendorDocumentType
     }
