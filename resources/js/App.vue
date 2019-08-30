@@ -8,7 +8,7 @@
 
             <el-aside width="auto">
                 <div class="brand-box">
-                    <img src="/images/logo.png" :style="collapse ? 'width:50px;margin:25px 0' : 'width:100px;margin:25px 0'" alt="">
+                    <img :src="baseUrl + '/images/logo.png'" :style="collapse ? 'width:50px;margin:25px 0' : 'width:100px;margin:25px 0'" alt="">
 
                     <div v-show="!collapse">
                         <el-avatar :size="50" icon="el-icon-user"></el-avatar>
@@ -137,6 +137,7 @@ export default {
     data() {
         return {
             collapse: false,
+            baseUrl: BASE_URL,
             appName: APP_NAME,
             showProfile: false,
             loginForm: !this.$store.state.is_logged_in
