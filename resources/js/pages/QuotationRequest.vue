@@ -263,8 +263,8 @@
                             <div class="el-form-item__error" v-if="formErrors.date">{{formErrors.date[0]}}</div>
                         </el-form-item>
                         <el-form-item label="Quotation Number">
-                            <el-input v-model="formModel.number" placeholder="Quotation Number"></el-input>
-                            <div class="el-form-item__error" v-if="formErrors.number">{{formErrors.number[0]}}</div>
+                            <el-input v-model="formModel.quotation_number" placeholder="Quotation Number"></el-input>
+                            <div class="el-form-item__error" v-if="formErrors.quotation_number">{{formErrors.quotation_number[0]}}</div>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
@@ -274,11 +274,11 @@
                             </el-select>
                             <div class="el-form-item__error" v-if="formErrors.currency">{{formErrors.currency[0]}}</div>
                         </el-form-item>
-                        <el-form-item label="Term of Payment" :class="formErrors.payment_term_id ? 'is-error' : ''">
-                            <el-select style="width:100%" placeholder="Term of Payment" clearable filterable default-first-option v-model="formModel.payment_term_id">
-                                <el-option v-for="(top, i) in $store.state.paymentTermList" :key="i" :label="top.description" :value="top.id"></el-option>
+                        <el-form-item label="Term of Payment" :class="formErrors.term_of_payment ? 'is-error' : ''">
+                            <el-select style="width:100%" placeholder="Term of Payment" clearable filterable default-first-option v-model="formModel.term_of_payment">
+                                <el-option v-for="(top, i) in $store.state.paymentTermList" :key="i" :label="top.description" :value="top.description"></el-option>
                             </el-select>
-                            <div class="el-form-item__error" v-if="formErrors.payment_term_id">{{formErrors.payment_term_id[0]}}</div>
+                            <div class="el-form-item__error" v-if="formErrors.term_of_payment">{{formErrors.term_of_payment[0]}}</div>
                         </el-form-item>
                         <el-form-item label="Inco Term"  :class="formErrors.inco_term ? 'is-error' : ''">
                             <el-input v-model="formModel.inco_term" placeholder="Inco Term"></el-input>

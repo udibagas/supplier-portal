@@ -11,4 +11,10 @@ class Quotation extends Model
         'quotation_number', 'currency', 'term_of_payment',
         'inco_term', 'status', 'approver_id'
     ];
+
+    protected $appends = ['date'];
+
+    public function getDateAttribute() {
+        return substr($this->created_at, 0, 10);
+    }
 }

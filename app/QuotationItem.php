@@ -8,7 +8,7 @@ class QuotationItem extends Model
 {
     protected $fillable = [
         'quotation_id', 'part_number', 'part_description',
-        'requested_qty', 'requested_delivery_date', 'remark',
+        'requested_qty', 'requested_delivery_date', 'remark', 'unit',
         'attachment', 'promised_qty', 'promised_delivery_date', 'price'
     ];
 }
