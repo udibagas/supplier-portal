@@ -28,7 +28,7 @@ class UserRequest extends FormRequest
             'email' => 'required|email',
             'password' => 'sometimes|required|min:6',
             'active' => 'boolean',
-            'role' => 'required|in:11,21,31',
+            'role' => 'required|in:11,21,22,23,24,25,31',
             'vendor_id' => 'required_if:role,31',
             'department_id' => 'required_if:role,21'
         ];
