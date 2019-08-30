@@ -36,6 +36,9 @@ class InvoiceSubmissionRequest extends FormRequest
             'wht_code_id' => 'required|exists:wht_code,id',
             'wht_base_amount' => 'required|numeric',
             'wht_amount' => 'required|numeric',
+            'baseline_date' => 'required|date',
+            'ppn_amount' => 'required|numeric',
+            'currency' => 'required'
             // 'total' => 'numeric'
         ];
     }

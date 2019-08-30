@@ -27,8 +27,8 @@
             <el-table-column prop="faktur_date" label="Faktur Date" min-width="120px"></el-table-column>
             <el-table-column prop="payment_term" label="Term of Payment" min-width="130px" show-overflow-tooltip=""></el-table-column>
             <el-table-column prop="due_date" sortable="custom" label="Due Date" min-width="120px"></el-table-column>
-            <el-table-column prop="wht_type" label="WHT Type" min-width="120px"></el-table-column>
-            <el-table-column prop="wht_code" label="WHT Code" min-width="120px"></el-table-column>
+            <el-table-column prop="wht_type" label="WHT Type" min-width="120px" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="wht_code" label="WHT Code" min-width="120px" show-overflow-tooltip></el-table-column>
             <el-table-column prop="wht_base_amount" label="WHT Base Amount" min-width="150px" align="right" header-align="right">
                 <template slot-scope="scope">
                     {{ scope.row.wht_base_amount | formatNumber }}
@@ -39,11 +39,17 @@
                     {{ scope.row.wht_amount | formatNumber }}
                 </template>
             </el-table-column>
+            <el-table-column prop="ppn_amount" label="PPN Amount" min-width="120px" align="right" header-align="right">
+                <template slot-scope="scope">
+                    {{ scope.row.ppn_amount | formatNumber }}
+                </template>
+            </el-table-column>
             <el-table-column prop="total" label="Total" min-width="120px" align="right" header-align="right">
                 <template slot-scope="scope">
                     {{ scope.row.total | formatNumber }}
                 </template>
             </el-table-column>
+            <el-table-column prop="currency" label="Currency" min-width="80px" align="center" header-align="center"></el-table-column>
             <el-table-column label="Invoice Doc" min-width="120px">
                 <template>
                     <el-button size="mini" type="primary" plain icon="el-icon-zoom-in">Show File</el-button>

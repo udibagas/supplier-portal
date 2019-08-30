@@ -19,11 +19,12 @@ class InvoiceSubmissionController extends Controller
             invoice_submissions.*,
             vendors.name AS vendor,
             payment_terms.description AS payment_term,
-            wht_code.VCH_Description AS wht_code
+            wht_code.VCH_Description AS wht_code,
+            wht_type.VCH_Description AS wht_type
         ')
             ->join('payment_terms', 'payment_terms.id', '=', 'invoice_submissions.payment_term_id')
             ->join('vendors', 'vendors.id', '=', 'invoice_submissions.vendor_id')
-            // ->join('wht_type', 'wht_type.VCH_whtType', '=', 'invoice_submissions.wht_type_id')
+            ->join('wht_type', 'wht_type.VCH_whtType', '=', 'invoice_submissions.wht_type_id')
             ->join('wht_code', 'wht_code.id', '=', 'invoice_submissions.wht_code_id')
             ->when($request->keyword, function($q) use ($request) {
                 return $q->where('invoice_number', 'LIKE', '%'.$request->keyword.'%')
@@ -48,6 +49,7 @@ class InvoiceSubmissionController extends Controller
         $input['vendor_id'] = $request->user()->vendor_id;
         $invoiceSubmission = InvoiceSubmission::create($input);
         $invoiceSubmission->items()->createMany($request->items);
+        $invoiceSubmission->attachments()->createMany($request->attachments);
         return $invoiceSubmission;
     }
 
@@ -73,7 +75,9 @@ class InvoiceSubmissionController extends Controller
     {
         $invoiceSubmission->update($request->all());
         $invoiceSubmission->items()->delete();
+        $invoiceSubmission->attachments()->delete();
         $invoiceSubmission->items()->createMany($request->items);
+        $invoiceSubmission->attachments()->createMany($request->attachments);
         return $invoiceSubmission;
     }
 
@@ -91,6 +95,7 @@ class InvoiceSubmissionController extends Controller
 
         $invoiceSubmission->delete();
         $invoiceSubmission->items()->delete();
+        $invoiceSubmission->attachments()->delete();
         return ['message' => 'Data has been deleted'];
     }
 }

@@ -40,6 +40,8 @@ Route::group(['middleware' => 'auth.jwt'], function() {
     Route::resource('industryType', 'IndustryTypeController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('invoiceSubmission', 'InvoiceSubmissionController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('invoiceSubmissionReview', 'InvoiceSubmissionReviewController')->only(['index', 'store', 'update', 'destroy']);
+    Route::post('invoiceSubmissionAttachment/uploadFile', 'InvoiceSubmissionAttachmentController@uploadFile');
+    Route::delete('invoiceSubmissionAttachment/deleteFile', 'InvoiceSubmissionAttachmentController@deleteFile');
     Route::resource('partnershipType', 'PartnershipTypeController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('paymentTerm', 'PaymentTermController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('productType', 'ProductTypeController')->only(['index', 'store', 'update', 'destroy']);

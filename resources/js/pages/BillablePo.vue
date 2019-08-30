@@ -17,7 +17,7 @@
         <el-table :data="tableData.data" stripe
         ref="poList"
         :default-sort="{prop: sort, order: order}"
-        @selection-change="(val) => { formModel.items = val; }"
+        @selection-change="(val) => { formModel.items = val }"
         height="calc(100vh - 290px)"
         v-loading="loading"
         @sort-change="sortChange">
@@ -27,6 +27,7 @@
             <el-table-column v-if="$store.state.user.role != 31" prop="vendor" label="Vendor" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
             <el-table-column prop="po_item" label="PO Item" sortable="custom" min-width="95px"></el-table-column>
             <el-table-column prop="description" label="Description" sortable="custom" show-overflow-tooltip min-width="200px"></el-table-column>
+            <el-table-column prop="text" label="Text" sortable="custom" show-overflow-tooltip min-width="100px"></el-table-column>
             <el-table-column prop="qty" label="Qty" sortable="custom" show-overflow-tooltip min-width="70px"></el-table-column>
             <el-table-column prop="uom" label="UoM" sortable="custom" show-overflow-tooltip min-width="80px"></el-table-column>
             <el-table-column prop="currency" label="Currency" sortable="custom" show-overflow-tooltip min-width="100px"></el-table-column>
@@ -40,7 +41,6 @@
                     {{scope.row.price * scope.row.qty | formatNumber}}
                 </template>
             </el-table-column>
-            <el-table-column prop="text" label="Text" sortable="custom" show-overflow-tooltip min-width="100px"></el-table-column>
             <el-table-column prop="delivery_date" label="Delivery Date" sortable="custom" show-overflow-tooltip min-width="150px"></el-table-column>
             <el-table-column fixed="right" prop="gr_status" label="GR Status" sortable="custom" min-width="150px">
                 <template slot-scope="scope">
@@ -88,7 +88,7 @@ export default {
             sort: 'po_number',
             order: 'ascending',
             loading: false,
-            tableData: {}
+            tableData: { }
         }
     },
     methods: {

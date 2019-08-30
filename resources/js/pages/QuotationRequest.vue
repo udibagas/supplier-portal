@@ -256,26 +256,32 @@
                 <el-row :gutter="30">
                     <el-col :span="12">
                         <el-form-item label="Vendor">
-                            <el-input placeholder="Vendor"></el-input>
+                            <el-input readonly v-model="formModel.vendor_name"></el-input>
                         </el-form-item>
-                        <el-form-item label="Quotation Date">
-                            <el-date-picker style="width:100%" value-format="yyyy-MM-dd" format="dd-MMM-yyyy" placeholder="Quotation Date"></el-date-picker>
+                        <el-form-item label="Quotation Date"  :class="formErrors.date ? 'is-error' : ''">
+                            <el-date-picker v-model="formModel.date" style="width:100%" value-format="yyyy-MM-dd" format="dd-MMM-yyyy" placeholder="Quotation Date"></el-date-picker>
+                            <div class="el-form-item__error" v-if="formErrors.date">{{formErrors.date[0]}}</div>
                         </el-form-item>
                         <el-form-item label="Quotation Number">
-                            <el-input placeholder="Quotation Number"></el-input>
+                            <el-input v-model="formModel.number" placeholder="Quotation Number"></el-input>
+                            <div class="el-form-item__error" v-if="formErrors.number">{{formErrors.number[0]}}</div>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="Currency">
+                        <el-form-item label="Currency"  :class="formErrors.currency ? 'is-error' : ''">
                             <el-select placeholder="Currency" v-model="formModel.currency" style="width:100%">
                                 <el-option v-for="i in ['IDR', 'USD']" :label="i" :value="i" :key="i"></el-option>
                             </el-select>
+                            <div class="el-form-item__error" v-if="formErrors.currency">{{formErrors.currency[0]}}</div>
                         </el-form-item>
-                        <el-form-item label="TOP">
-                            <el-input placeholder="TOP"></el-input>
+                        <el-form-item label="Term of Payment" :class="formErrors.payment_term_id ? 'is-error' : ''">
+                            <el-select style="width:100%" placeholder="Term of Payment" clearable filterable default-first-option v-model="formModel.payment_term_id">
+                                <el-option v-for="(top, i) in $store.state.paymentTermList" :key="i" :label="top.description" :value="top.id"></el-option>
+                            </el-select>
+                            <div class="el-form-item__error" v-if="formErrors.payment_term_id">{{formErrors.payment_term_id[0]}}</div>
                         </el-form-item>
-                        <el-form-item label="Inco Term">
-                            <el-input placeholder="Inco Term"></el-input>
+                        <el-form-item label="Inco Term"  :class="formErrors.inco_term ? 'is-error' : ''">
+                            <el-input v-model="formModel.inco_term" placeholder="Inco Term"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -291,21 +297,27 @@
                 </el-table-column>
                 <el-table-column header-align="center" label="Quotation">
                     <el-table-column label="Qty" width="100px" header-align="center">
-                        <el-input v-model="formModel.qty" size="small" placeholder="Qty" type="number"></el-input>
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.qty" size="small" placeholder="Qty" type="number"></el-input>
+                        </template>
                     </el-table-column>
-                    <el-table-column label="Price" width="100px" header-align="center">
-                        <el-input v-model="formModel.price" size="small" placeholder="Price" type="number"></el-input>
+                    <el-table-column label="Price" width="150px" header-align="center">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.price" size="small" placeholder="Price" type="number"></el-input>
+                        </template>
                     </el-table-column>
                     <el-table-column label="Delivery Date" width="150px" header-align="center">
-                        <el-date-picker v-model="formModel.delivery_date" size="small" style="width:100%" value-format="yyyy-MM-dd" format="dd-MMM-yyyy" placeholder="Delivery Date"></el-date-picker>
+                        <template slot-scope="scope">
+                            <el-date-picker v-model="scope.row.delivery_date" size="small" style="width:100%" value-format="yyyy-MM-dd" format="dd-MMM-yyyy" placeholder="Delivery Date"></el-date-picker>
+                        </template>
                     </el-table-column>
                 </el-table-column>
             </el-table>
 
             <div slot="footer">
-                <el-button plain type="primary"><i class="el-icon-success"></i> SAVE AS DRAFT</el-button>
-                <el-button type="primary"><i class="el-icon-success"></i> SUBMIT</el-button>
-                <el-button type="info" @click="quotationForm = false"><i class="el-icon-error"></i> CANCEL</el-button>
+                <el-button plain type="primary" icon="el-icon-success" @click="() => !!formModel.id ? updateQuotation(0) : storeQuotation(0)">SAVE AS DRAFT</el-button>
+                <el-button type="primary" icon="el-icon-success" @click="() => !!formModel.id ? updateQuotation(1) : storeQuotation(1)">SUBMIT</el-button>
+                <el-button type="info" @click="quotationForm = false" icon="el-icon-error">CANCEL</el-button>
             </div>
         </el-dialog>
     </div>
@@ -323,7 +335,7 @@ export default {
             formErrors: {},
             formErrorsItem: {},
             error: {},
-            formModel: {},
+            formModel: { items: [] },
             keyword: '',
             page: 1,
             pageSize: 10,
@@ -385,6 +397,7 @@ export default {
         },
         createQuotation(data) {
             this.formModel = JSON.parse(JSON.stringify(data))
+            this.formModel.vendor_name = data.vendor_assignments.find(a => a.vendor_id == this.$store.state.user.vendor_id).vendor.name
             this.quotationForm = true
         },
         addItem() {
@@ -525,6 +538,7 @@ export default {
         this.requestData();
         this.$store.commit('getDepartmentList')
         this.$store.commit('getVendorList')
+        this.$store.commit('getPaymentTermList')
     }
 }
 </script>
