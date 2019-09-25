@@ -306,7 +306,7 @@
                             <el-input v-model="scope.row.price" size="small" placeholder="Price" type="number"></el-input>
                         </template>
                     </el-table-column>
-                    <el-table-column label="Delivery Date" width="150px" header-align="center">
+                    <el-table-column label="Delivery Date" width="170px" header-align="center">
                         <template slot-scope="scope">
                             <el-date-picker v-model="scope.row.delivery_date" size="small" style="width:100%" value-format="yyyy-MM-dd" format="dd-MMM-yyyy" placeholder="Delivery Date"></el-date-picker>
                         </template>
@@ -399,6 +399,56 @@ export default {
             this.formModel = JSON.parse(JSON.stringify(data))
             this.formModel.vendor_name = data.vendor_assignments.find(a => a.vendor_id == this.$store.state.user.vendor_id).vendor.name
             this.quotationForm = true
+        },
+        storeQuotation(status) {
+            this.loading = true
+            axios.post('/quotation', this.formModel).then(r => {
+                this.$message({
+                    message: 'Data telah disimpan',
+                    type: 'success',
+                    showClose: true
+                })
+                this.requestData()
+            }).catch(e => {
+                if (e.response.status == 422) {
+                    this.formErrors = e.response.data.errors;
+                }
+
+                else {
+                    this.$message({
+                        message: 'Failed to save data',
+                        type: 'error',
+                        showClose: true
+                    })
+                }
+            }).finally(() => {
+                this.loading = false
+            })
+        },
+        updateQuotation(status) {
+            this.loading = true
+            axios.put('/quotation/' + this.formModel.id, this.formModel).then(r => {
+                this.$message({
+                    message: 'Data telah disimpan',
+                    type: 'success',
+                    showClose: true
+                })
+                this.requestData()
+            }).catch(e => {
+                if (e.response.status == 422) {
+                    this.formErrors = e.response.data.errors;
+                }
+
+                else {
+                    this.$message({
+                        message: 'Failed to save data',
+                        type: 'error',
+                        showClose: true
+                    })
+                }
+            }).finally(() => {
+                this.loading = false
+            })
         },
         addItem() {
             this.formModel.items.push({

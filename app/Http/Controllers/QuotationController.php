@@ -28,10 +28,13 @@ class QuotationController extends Controller
     {
         try {
             DB::transaction(function () use ($request) {
-                $id = DB::table('quotation_requests')->insertGetId([
+                $id = DB::table('quotations')->insertGetId([
                     'user_id' => $request->user()->id,
-                    'department_id' => $request->department_id,
-                    'subject' => $request->subject
+                    'vendor_id' => $request->user()->vendor_id,
+                    'quotation_number' => $request->quotation_number,
+                    'currency' => $request->currency,
+                    'term_of_payment' => $request->term_of_payment,
+                    'inco_term' => $request->inco_term,
                 ]);
 
                 DB::table('quotation_request_items')->insert(
@@ -69,23 +72,25 @@ class QuotationController extends Controller
     public function update(QuotationRequest $request, Quotation $quotation)
     {
         try {
-            DB::transaction(function () use ($request, $quotationRequest) {
-                DB::table('quotation_requests')
-                    ->where('id', $quotationRequest->id)
+            DB::transaction(function () use ($request, $quotation) {
+                DB::table('quotations')
+                    ->where('id', $quotation->id)
                     ->update([
-                        'department_id' => $request->department_id,
-                        'subject' => $request->subject
+                        'quotation_number' => $request->quotation_number,
+                        'currency' => $request->currency,
+                        'term_of_payment' => $request->term_of_payment,
+                        'inco_term' => $request->inco_term,
                     ]);
 
                 // delete all item first
-                DB::table('quotation_request_items')
-                    ->where('quotation_request_id', $quotationRequest->id)
+                DB::table('quotation_items')
+                    ->where('quotation_id', $quotation->id)
                     ->delete();
 
                 // add new item
-                DB::table('quotation_request_items')->insert(
-                    array_map(function($item) use ($quotationRequest) {
-                        $item['quotation_id'] = $quotationRequest->id;
+                DB::table('quotation_items')->insert(
+                    array_map(function($item) use ($quotation) {
+                        $item['quotation_id'] = $quotation->id;
                         return $item;
                     }, $request->items)
                 );
