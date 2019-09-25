@@ -26,7 +26,7 @@
             </el-form-item>
         </el-form>
 
-        <v-chart style="height:calc(100vh - 270px);width:100%" :options="chart" ref="bar" autoresize />
+        <v-chart style="height:350px;width:100%" :options="chart" ref="bar" autoresize />
 
         <!-- <el-row :gutter="20">
             <el-col :span="24">
@@ -99,9 +99,9 @@ export default {
                 // legend: {},
                 tooltip: {},
                 grid: {
-                    left: '25px',
-                    right: '25px',
-                    bottom: '0%',
+                    left: '50px',
+                    right: '50px',
+                    bottom: '50px',
                     containLabel: true
                 },
                 xAxis: {
