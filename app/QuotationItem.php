@@ -11,4 +11,9 @@ class QuotationItem extends Model
         'requested_qty', 'requested_delivery_date', 'remark', 'unit',
         'attachment', 'promised_qty', 'promised_delivery_date', 'price'
     ];
+
+    public function quotation()
+    {
+        return $this->belongsTo(Quotation::class);
+    }
 }

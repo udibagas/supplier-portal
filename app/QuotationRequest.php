@@ -12,25 +12,35 @@ class QuotationRequest extends Model
         'status', 'subject'
     ];
 
-    protected $with = ['vendorAssignments'];
+    protected $with = ['vendorAssignments', 'vendorQuotations'];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function department() {
+    public function department()
+    {
         return $this->belongsTo(Department::class);
     }
 
-    public function items() {
+    public function items()
+    {
         return $this->hasMany(QuotationRequestItem::class);
     }
 
-    public function vendorAssignments() {
+    public function vendorAssignments()
+    {
         return $this->hasMany(VendorAssignmentQuotationRequest::class);
     }
 
-    public function assignments() {
+    public function assignments()
+    {
         return $this->hasMany(QuotationRequestAssignment::class);
+    }
+
+    public function vendorQuotations()
+    {
+        return $this->hasMany(Quotation::class);
     }
 }

@@ -25,8 +25,9 @@ class QuotationRequest extends FormRequest
     {
         return [
             'quotation_request_id' => 'required|exists:quotation_requests,id',
-            'vendor_id' => 'required|exists:vendors,id',
+            // 'vendor_id' => 'required|exists:vendors,id',
             'quotation_number' => 'required',
+            'quotation_date' => 'required|date',
             'currency' => 'required',
             'term_of_payment' => 'required',
             'inco_term' => 'required',

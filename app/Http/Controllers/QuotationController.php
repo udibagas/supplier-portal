@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Quotation;
 use App\Http\Requests\QuotationRequest;
+use Illuminate\Support\Facades\DB;
 
 class QuotationController extends Controller
 {
@@ -26,29 +27,18 @@ class QuotationController extends Controller
      */
     public function store(QuotationRequest $request)
     {
-        try {
-            DB::transaction(function () use ($request) {
-                $id = DB::table('quotations')->insertGetId([
-                    'user_id' => $request->user()->id,
-                    'vendor_id' => $request->user()->vendor_id,
-                    'quotation_number' => $request->quotation_number,
-                    'currency' => $request->currency,
-                    'term_of_payment' => $request->term_of_payment,
-                    'inco_term' => $request->inco_term,
-                ]);
+        $quotation = DB::transaction(function () use ($request) {
+            $quotation = Quotation::create(array_merge($request->all(), [
+                'user_id' => $request->user()->id,
+                'vendor_id' => $request->user()->vendor_id,
+            ]));
 
-                DB::table('quotation_request_items')->insert(
-                    array_map(function($item) use ($id) {
-                        $item['quotation_id'] = $id;
-                        return $item;
-                    }, $request->items)
-                );
-            });
-        } catch (\Exception $e) {
-            return response(['message' => 'Failed to save data. '. $e->getMessage()], 500);
-        }
+            $quotation->items()->createMany($request->items);
 
-        return ['message' => 'Data has been saved!'];
+            return $quotation;
+        });
+
+        return ['message' => 'Data has been saved!', 'data' => $quotation];
     }
 
     /**
@@ -89,14 +79,14 @@ class QuotationController extends Controller
 
                 // add new item
                 DB::table('quotation_items')->insert(
-                    array_map(function($item) use ($quotation) {
+                    array_map(function ($item) use ($quotation) {
                         $item['quotation_id'] = $quotation->id;
                         return $item;
                     }, $request->items)
                 );
             });
         } catch (\Exception $e) {
-            return response(['message' => 'Failed to save data. '. $e->getMessage()], 500);
+            return response(['message' => 'Failed to save data. ' . $e->getMessage()], 500);
         }
 
         return ['message' => 'Data has been saved!'];
