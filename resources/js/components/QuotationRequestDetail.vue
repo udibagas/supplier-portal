@@ -91,6 +91,11 @@
             <QuotationItem :items="scope.row.items" />
           </template>
         </el-table-column>
+        <el-table-column prop="status_name" label="Status" show-overflow-tooltip min-width="100px">
+          <template slot-scope="scope">
+            <el-tag :type="status[scope.row.status]" effect="dark">{{scope.row.status_name}}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="vendor.name" label="Vendor" show-overflow-tooltip min-width="150px"></el-table-column>
         <el-table-column prop="quotation_date" label="Date" show-overflow-tooltip min-width="150px"></el-table-column>
         <el-table-column
@@ -116,7 +121,17 @@
 import QuotationItem from "./QuotationItem";
 export default {
   props: ["data"],
-  components: { QuotationItem }
+  components: { QuotationItem },
+  data() {
+    return {
+      status: {
+        0: "info",
+        1: "warning",
+        2: "success",
+        3: "danger"
+      }
+    };
+  }
 };
 </script>
 
